@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avera — Outreach Email Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8f9fc;
+            --surface: #ffffff;
+            --surface-2: #f1f3f8;
+            --border: #e5e7ef;
+            --text: #1a1d2e;
+            --text-dim: #6b7194;
+            --accent: #6c5ce7;
+            --accent-light: #ebe8ff;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            padding: 24px 32px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .header .subtitle {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .header-right {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* Main layout */
+        .main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        /* Select */
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            color: var(--text);
+            background: var(--surface);
+            appearance: none;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .select-wrapper select:focus {
+            border-color: var(--accent);
+        }
+        .select-wrapper::after {
+            content: '';
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--text-dim);
+            pointer-events: none;
+        }
+
+        /* Prospect details */
+        .prospect-details {
+            display: none;
+        }
+        .prospect-details.visible {
+            display: block;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .detail-item {
+            padding: 12px 16px;
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+        }
+        .detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+        .detail-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .detail-value {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* Email section */
+        .email-section {
+            display: none;
+        }
+        .email-section.visible {
+            display: block;
+        }
+        .email-subject {
+            padding: 12px 16px;
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        .email-subject strong {
+            color: var(--text-dim);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .email-textarea {
+            width: 100%;
+            min-height: 320px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text);
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.15s;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+        .email-textarea:focus {
+            border-color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-primary:hover { background: #5a4bd4; }
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--border); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            background: var(--green);
+            box-shadow: var(--shadow);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Template badge */
+        .template-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-dim);
+        }
+        .empty-state p {
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .empty-state .icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .empty-state code {
+            background: var(--surface-2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        /* Seed data button */
+        .btn-seed {
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-seed:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        @media (max-width: 640px) {
+            .main { padding: 16px; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .header { padding: 16px; }
+            .btn-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>Avera</h1>
+        <div class="subtitle">Outreach Email Generator</div>
+    </div>
+    <div class="header-right" id="prospectCount"></div>
+</div>
+
+<div class="main">
+    <!-- Prospect Selector -->
+    <div class="card">
+        <div class="card-title">Select Prospect</div>
+        <div class="select-wrapper">
+            <select id="prospectSelect" onchange="onProspectSelected()">
+                <option value="">Choose a prospect...</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="card" id="emptyState" style="display:none;">
+        <div class="empty-state">
+            <div class="icon">&#9993;</div>
+            <p>No prospects found in localStorage. Add prospects using the <code>Prospect Tracker</code> or load sample data to try the generator.</p>
+            <button class="btn-seed" onclick="seedSampleData()">Load Sample Data</button>
+        </div>
+    </div>
+
+    <!-- Prospect Details -->
+    <div class="card prospect-details" id="prospectDetails">
+        <div class="card-title">Prospect Details</div>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Company</div>
+                <div class="detail-value" id="detailCompany">-</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Contact</div>
+                <div class="detail-value" id="detailContact">-</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Title</div>
+                <div class="detail-value" id="detailTitle">-</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Funding</div>
+                <div class="detail-value" id="detailFunding">-</div>
+            </div>
+            <div class="detail-item full-width">
+                <div class="detail-label">Why M&amp;A Fits</div>
+                <div class="detail-value" id="detailWhyMA">-</div>
+            </div>
+            <div class="detail-item full-width">
+                <div class="detail-label">Outreach Hook</div>
+                <div class="detail-value" id="detailHook">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Draft -->
+    <div class="card email-section" id="emailSection">
+        <div class="card-title">Email Draft</div>
+        <span class="template-badge" id="templateBadge">Template A</span>
+        <div class="email-subject" id="emailSubject">
+            <strong>Subject: </strong><span id="subjectLine"></span>
+        </div>
+        <textarea class="email-textarea" id="emailBody"></textarea>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="copyToClipboard()">Copy to Clipboard</button>
+            <button class="btn btn-secondary" onclick="regenerateEmail()">Regenerate</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+const STORAGE_KEY = 'avera-prospects';
+
+function loadProspects() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch { return []; }
+}
+
+function esc(str) {
+    const el = document.createElement('span');
+    el.textContent = str;
+    return el.innerHTML;
+}
+
+// Extract first name from a contact string like "John Smith" or "Jane Doe (CEO)"
+function firstName(contact) {
+    if (!contact) return '';
+    return contact.trim().split(/[\s(]/)[0];
+}
+
+// Build funding string from available fields
+function fundingStr(p) {
+    const parts = [];
+    if (p.stage) parts.push(p.stage);
+    if (p.fundingAmount) parts.push(p.fundingAmount);
+    if (p.fundingDate) parts.push(p.fundingDate);
+    return parts.join(' / ') || 'Not specified';
+}
+
+// ── Email Templates ──
+// Each returns { subject, body } given a prospect object.
+// Style: confident, credible, direct. Three paragraphs. No em dashes. Let track record speak.
+
+const templates = [
+    // Template A: Credential-led cold intro
+    function(p) {
+        const name = firstName(p.leadContact);
+        const company = p.companyName;
+        const hook = p.outreachHook || `${company}'s recent growth`;
+        const maFit = p.whyMAFits || 'strategic acquisitions to accelerate growth';
+        const stage = p.stage ? `${p.stage}` : 'recent raise';
+        return {
+            subject: `Congratulations on ${company}'s ${stage}`,
+            body: `Hi ${name},
+
+Congratulations on ${company}'s ${stage}! ${hook}
+
+I wanted to reach out because I recently launched my own M&A advisory for growth-stage businesses, after leading corporate development for several years at Wellhub and Zendesk. I work with growth-stage companies as their dedicated deal lead.
+
+I'm based in NYC and would love to grab coffee to hear more about ${company}'s strategic growth priorities. Do you have time in the next week or so?
+
+Thanks!
+Ilene`
+        };
+    },
+
+    // Template B: Problem-led with specific M&A angle
+    function(p) {
+        const name = firstName(p.leadContact);
+        const company = p.companyName;
+        const hook = p.outreachHook || `${company}'s trajectory in the space`;
+        const maFit = p.whyMAFits || 'acquisitions to expand capabilities and market reach';
+        return {
+            subject: `M&A for ${company}`,
+            body: `Hi ${name},
+
+I work with growth-stage founders who want to pursue acquisitions but don't have the bandwidth or in-house team to execute. I step in as your dedicated deal lead and own the process end to end, from sourcing through close.
+
+Before launching Avera, I led corporate development at Wellhub and Zendesk for several years. I've been looking at ${company}'s space and think there's a strong case for ${maFit}. ${hook}
+
+Would you be open to a 20-minute call this week? I'd love to share what I'm seeing in the market.
+
+Best,
+Ilene Chen
+Founder, Avera`
+        };
+    },
+
+    // Template C: Warm/personal with research hook
+    function(p) {
+        const name = firstName(p.leadContact);
+        const company = p.companyName;
+        const hook = p.outreachHook || `I've been impressed by what ${company} is building`;
+        const maFit = p.whyMAFits || 'inorganic growth to accelerate the roadmap';
+        const sector = p.sector ? `, focusing on ${p.sector.toLowerCase()}` : '';
+        return {
+            subject: `Congratulations on ${company}'s ${p.stage || 'milestone'}`,
+            body: `Hi ${name},
+
+Congratulations on ${company}'s ${p.stage || 'recent progress'}! ${hook}
+
+I wanted to reach out because I recently launched my own M&A advisory for growth-stage businesses${sector}, after leading corporate development for several years at Wellhub and Zendesk. I work with growth-stage companies as their dedicated deal lead.
+
+I'm based in NYC and would love to grab coffee to hear more about ${company}'s strategic growth priorities, especially around ${maFit}. Do you have time in the next week or so?
+
+Thanks!
+Ilene`
+        };
+    },
+
+    // Template D: Direct with value proposition woven in
+    function(p) {
+        const name = firstName(p.leadContact);
+        const company = p.companyName;
+        const hook = p.outreachHook || `${company} looks well positioned for inorganic growth`;
+        const maFit = p.whyMAFits || 'acquisitions as a growth lever';
+        const fundingNote = p.fundingAmount ? ` and ${p.fundingAmount} raise` : '';
+        return {
+            subject: `Acquisitions as a growth lever for ${company}`,
+            body: `Hi ${name},
+
+Congratulations on ${company}'s ${p.stage || 'momentum'}${fundingNote}! ${hook}
+
+I recently launched Avera, an M&A advisory for growth-stage companies, after leading corporate development at Wellhub and Zendesk for several years. I kept seeing the same gap: founders who know ${maFit} could accelerate their roadmap, but don't have the team or bandwidth to make it happen. That's the problem I solve.
+
+I'd love to grab coffee and hear more about ${company}'s strategic growth priorities. Do you have time in the next week or two?
+
+Thanks!
+Ilene`
+        };
+    }
+];
+
+const templateNames = ['Template A', 'Template B', 'Template C', 'Template D'];
+
+let currentProspect = null;
+let currentTemplateIndex = -1;
+
+// ── Initialize ──
+function init() {
+    const prospects = loadProspects();
+    const select = document.getElementById('prospectSelect');
+    const countEl = document.getElementById('prospectCount');
+
+    // Clear existing options beyond the placeholder
+    select.innerHTML = '<option value="">Choose a prospect...</option>';
+
+    if (prospects.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        countEl.textContent = '0 prospects';
+        return;
+    }
+
+    document.getElementById('emptyState').style.display = 'none';
+    countEl.textContent = `${prospects.length} prospect${prospects.length !== 1 ? 's' : ''}`;
+
+    // Sort alphabetically
+    const sorted = [...prospects].sort((a, b) =>
+        (a.companyName || '').localeCompare(b.companyName || '')
+    );
+
+    sorted.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.companyName}${p.leadContact ? ' — ' + p.leadContact : ''}`;
+        select.appendChild(opt);
+    });
+}
+
+function onProspectSelected() {
+    const select = document.getElementById('prospectSelect');
+    const id = select.value;
+
+    if (!id) {
+        document.getElementById('prospectDetails').classList.remove('visible');
+        document.getElementById('emailSection').classList.remove('visible');
+        currentProspect = null;
+        return;
+    }
+
+    const prospects = loadProspects();
+    const prospect = prospects.find(p => p.id === id);
+    if (!prospect) return;
+
+    currentProspect = prospect;
+    showProspectDetails(prospect);
+    generateEmail(prospect);
+}
+
+function showProspectDetails(p) {
+    document.getElementById('detailCompany').textContent = p.companyName || '-';
+    document.getElementById('detailContact').textContent = p.leadContact || '-';
+    document.getElementById('detailTitle').textContent = p.contactTitle || '-';
+    document.getElementById('detailFunding').textContent = fundingStr(p);
+    document.getElementById('detailWhyMA').textContent = p.whyMAFits || 'Not specified';
+    document.getElementById('detailHook').textContent = p.outreachHook || 'Not specified';
+    document.getElementById('prospectDetails').classList.add('visible');
+}
+
+function generateEmail(prospect, forceNewTemplate) {
+    // Pick a random template, avoiding the current one if regenerating
+    let idx;
+    if (forceNewTemplate && templates.length > 1) {
+        do {
+            idx = Math.floor(Math.random() * templates.length);
+        } while (idx === currentTemplateIndex);
+    } else {
+        idx = Math.floor(Math.random() * templates.length);
+    }
+    currentTemplateIndex = idx;
+
+    const email = templates[idx](prospect);
+
+    document.getElementById('templateBadge').textContent = templateNames[idx];
+    document.getElementById('subjectLine').textContent = email.subject;
+    document.getElementById('emailBody').value = email.body;
+    document.getElementById('emailSection').classList.add('visible');
+}
+
+function regenerateEmail() {
+    if (!currentProspect) return;
+    generateEmail(currentProspect, true);
+}
+
+function copyToClipboard() {
+    const subject = document.getElementById('subjectLine').textContent;
+    const body = document.getElementById('emailBody').value;
+    const full = `Subject: ${subject}\n\n${body}`;
+
+    navigator.clipboard.writeText(full).then(() => {
+        showToast('Copied to clipboard');
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = full;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Copied to clipboard');
+    });
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ── Seed sample data for demo purposes ──
+function seedSampleData() {
+    const sample = [
+        {
+            id: 'demo-1',
+            companyName: 'Nourish',
+            website: 'nourish.com',
+            sector: 'Healthcare',
+            subsector: 'Nutrition',
+            stage: 'Series B',
+            fundingAmount: '$35M',
+            fundingDate: '2026-01',
+            leadContact: 'Aidan Blume',
+            contactTitle: 'CEO & Co-Founder',
+            whyMAFits: 'acquiring telehealth or dietitian marketplace companies to expand provider network',
+            outreachHook: 'I saw that Nourish recently expanded its insurance coverage to 50 states, which is an impressive milestone for a health tech company at this stage.',
+            status: 'Not Started',
+            meetings: []
+        },
+        {
+            id: 'demo-2',
+            companyName: 'Garner Health',
+            website: 'garnerhealth.com',
+            sector: 'Healthcare',
+            subsector: 'Health Benefits',
+            stage: 'Series B',
+            fundingAmount: '$45M',
+            fundingDate: '2025-11',
+            leadContact: 'Michael Botta',
+            contactTitle: 'CEO & Co-Founder',
+            whyMAFits: 'consolidating smaller health navigation tools to build a comprehensive benefits platform',
+            outreachHook: 'I read about Garner\'s approach to doctor quality measurement and the early traction with self-insured employers, and I think the timing is right for inorganic expansion.',
+            status: 'Not Started',
+            meetings: []
+        },
+        {
+            id: 'demo-3',
+            companyName: 'Cleo',
+            website: 'hicleo.com',
+            sector: 'Healthcare',
+            subsector: 'Family Benefits',
+            stage: 'Series C',
+            fundingAmount: '$62M',
+            fundingDate: '2025-09',
+            leadContact: 'Sahin Boydas',
+            contactTitle: 'CEO',
+            whyMAFits: 'acquiring complementary family health or parenting platforms to deepen the product offering',
+            outreachHook: 'I\'m personally very interested in the family benefits space, having most recently led corporate development at Wellhub, a platform offering corporate wellness benefits through partnerships with health and wellness providers.',
+            status: 'Not Started',
+            meetings: []
+        }
+    ];
+
+    const existing = loadProspects();
+    const existingIds = new Set(existing.map(p => p.id));
+    const toAdd = sample.filter(s => !existingIds.has(s.id));
+
+    if (toAdd.length > 0) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...existing, ...toAdd]));
+    }
+
+    init();
+    showToast(`Loaded ${toAdd.length} sample prospect${toAdd.length !== 1 ? 's' : ''}`);
+}
+
+// Boot
+init();
+</script>
+
+</body>
+</html>

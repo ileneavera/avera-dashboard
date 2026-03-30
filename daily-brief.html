@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avera Daily Brief — March 23, 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8f9fc;
+            --surface: #ffffff;
+            --surface-2: #f1f3f8;
+            --border: #e5e7ef;
+            --text: #1a1d2e;
+            --text-dim: #6b7194;
+            --accent: #6c5ce7;
+            --accent-light: #ebe8ff;
+            --green: #10b981;
+            --green-soft: rgba(16,185,129,0.08);
+            --amber: #f59e0b;
+            --amber-soft: rgba(245,158,11,0.08);
+            --red: #ef4444;
+            --red-soft: rgba(239,68,68,0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 24px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--accent-light);
+        }
+        .brand {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .date {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .actions button {
+            cursor: pointer;
+            font-family: inherit;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.15s;
+        }
+        .btn-copy {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-copy:hover { background: #5a4bd4; }
+        .btn-print {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-print:hover { background: var(--border); }
+
+        /* Greeting */
+        .greeting {
+            font-size: 15px;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Deal cards */
+        .deal-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        .deal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .deal-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .deal-amount {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+        .deal-meta {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .tag-sector { background: var(--accent-light); color: var(--accent); }
+        .tag-date { background: var(--surface-2); color: var(--text-dim); }
+        .tag-pipeline { background: var(--green-soft); color: var(--green); }
+        .deal-context {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* Fundraising table */
+        .funding-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        .funding-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .funding-company {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .funding-round {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .funding-details {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+        .funding-context {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Commentary */
+        .commentary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        .commentary p {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .commentary p:last-child { margin-bottom: 0; }
+
+        /* Sign-off */
+        .signoff {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+        .signoff .name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Sources */
+        .sources {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .sources a {
+            display: block;
+            font-size: 12px;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 3px 0;
+        }
+        .sources a:hover { text-decoration: underline; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--text);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Print */
+        @media print {
+            body { background: white; }
+            .actions { display: none; }
+            .container { padding: 0; }
+            .deal-card, .funding-card, .commentary { box-shadow: none; break-inside: avoid; }
+            .toast { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="brand">Avera</div>
+        <div class="date">Daily Brief</div>
+        <div class="subtitle">March 23, 2026</div>
+        <div class="actions">
+            <button class="btn-copy" onclick="copyBrief()">Copy as Text</button>
+            <button class="btn-print" onclick="window.print()">Print</button>
+        </div>
+    </div>
+
+    <div class="greeting">Here's what happened this week in M&A and fundraising that's worth knowing about.</div>
+
+    <!-- DEALS -->
+    <div class="section">
+        <div class="section-title">Deals</div>
+
+        <div class="deal-card">
+            <div class="deal-header">
+                <div class="deal-title">IBM acquires Confluent</div>
+                <div class="deal-amount">$11B</div>
+            </div>
+            <div class="deal-meta">
+                <span class="tag tag-sector">Enterprise Data</span>
+                <span class="tag tag-date">Mar 17</span>
+            </div>
+            <div class="deal-context">Enterprise data infrastructure play. IBM buying the Kafka company signals continued consolidation in data infrastructure.</div>
+        </div>
+
+        <div class="deal-card">
+            <div class="deal-header">
+                <div class="deal-title">ServiceNow acquiring Armis</div>
+                <div class="deal-amount">$7.75B</div>
+            </div>
+            <div class="deal-meta">
+                <span class="tag tag-sector">Cybersecurity</span>
+                <span class="tag tag-date">Expected close 2026</span>
+            </div>
+            <div class="deal-context">Cybersecurity continues to consolidate. ServiceNow expanding its security platform through acquisition rather than building in-house.</div>
+        </div>
+
+        <div class="deal-card">
+            <div class="deal-header">
+                <div class="deal-title">Abbott / Exact Sciences</div>
+                <div class="deal-amount">~$21B</div>
+            </div>
+            <div class="deal-meta">
+                <span class="tag tag-sector">Medtech / Diagnostics</span>
+            </div>
+            <div class="deal-context">Diagnostics consolidation. The kind of capability-driven healthcare deal that's becoming the norm.</div>
+        </div>
+
+        <div class="deal-card">
+            <div class="deal-header">
+                <div class="deal-title">Kimberly-Clark / Kenvue</div>
+                <div class="deal-amount">$48.7B</div>
+            </div>
+            <div class="deal-meta">
+                <span class="tag tag-sector">Consumer Health</span>
+            </div>
+            <div class="deal-context">Largest consumer health deal in a while. Signals that the big corporates are back to doing transformative deals.</div>
+        </div>
+    </div>
+
+    <!-- TREND -->
+    <div class="section">
+        <div class="commentary">
+            <p>The pattern this month: deal count is down, deal value is up. Companies are buying capabilities, not just scale. Paul Weiss flagged that about a third of the 100 largest corporate transactions are now citing AI as part of the strategic rationale.</p>
+        </div>
+    </div>
+
+    <!-- FUNDRAISING -->
+    <div class="section">
+        <div class="section-title">Fundraising</div>
+
+        <div class="funding-card">
+            <div class="funding-header">
+                <div class="funding-company">Grow Therapy</div>
+                <div class="funding-round">Series D · $150M</div>
+            </div>
+            <div class="funding-details">Led by TCV, Goldman Sachs · $3B valuation · Mar 3</div>
+            <div class="funding-context">
+                <span class="tag tag-pipeline" style="margin-bottom:8px;display:inline-block">In Your Pipeline</span><br>
+                Building out an enterprise mental health offering. Fresh raise at that valuation means they're in growth mode and may be thinking about acquisitions to accelerate.
+            </div>
+        </div>
+
+        <div class="funding-card">
+            <div class="funding-header">
+                <div class="funding-company">Turquoise Health</div>
+                <div class="funding-round">Series C · $40M</div>
+            </div>
+            <div class="funding-details">Led by Oak HC/FT, a16z · Mar 17</div>
+            <div class="funding-context">Healthcare pricing and payments. Worth tracking as a potential prospect, they're in the sweet spot of growth-stage healthtech that may need M&A to expand.</div>
+        </div>
+
+        <div class="funding-card">
+            <div class="funding-header">
+                <div class="funding-company">Translucent</div>
+                <div class="funding-round">Series A · $27M</div>
+            </div>
+            <div class="funding-details">Led by GV, NEA · Mar 11</div>
+            <div class="funding-context">AI-native healthcare finance startup. Worth watching as AI infrastructure in healthcare continues to attract capital.</div>
+        </div>
+
+        <div class="funding-card">
+            <div class="funding-header">
+                <div class="funding-company">Conduit Health</div>
+                <div class="funding-round">$17M</div>
+            </div>
+            <div class="funding-details">Led by Drive Capital</div>
+            <div class="funding-context">Home healthcare. Smaller round but the sector is growing fast with aging demographics driving demand.</div>
+        </div>
+
+        <div class="funding-card">
+            <div class="funding-header">
+                <div class="funding-company">Mestag Therapeutics</div>
+                <div class="funding-round">$40M</div>
+            </div>
+            <div class="funding-details">Immuno-oncology</div>
+            <div class="funding-context">Advancing novel immuno-oncology treatments into clinical trials. Biotech M&A tends to pick up when companies hit this stage.</div>
+        </div>
+    </div>
+
+    <!-- WHAT I'M WATCHING -->
+    <div class="section">
+        <div class="section-title">What I'm Watching</div>
+
+        <div class="commentary">
+            <p>Mental health continues to be one of the most active sectors. Grow Therapy, Talkiatry ($210M Series D in February), and Headway ($2.3B valuation) are all scaling fast, and the sector is ripe for consolidation. Several of these companies are in my pipeline.</p>
+
+            <p>The healthcare AI space is also heating up. Hippocratic AI hit a $3.5B valuation, Tennr raised $101M for AI patient referrals, and Nabla is now in 85,000+ clinician workflows. These are the kinds of companies that will be both acquirers and acquisition targets in the next 12 to 18 months.</p>
+        </div>
+    </div>
+
+    <!-- SIGN-OFF -->
+    <div class="signoff">
+        Talk soon,<br>
+        <span class="name">Ilene</span>
+    </div>
+
+    <!-- SOURCES -->
+    <div class="sources">
+        <div class="sources-title">Sources</div>
+        <a href="https://www.paulweiss.com/insights/client-memos/ma-at-a-glance-march-2026" target="_blank">Paul Weiss — M&A at a Glance, March 2026</a>
+        <a href="https://www.ethosdata.com/blog/category-mergers-and-acquisitions/recent-ma-deals/" target="_blank">EthosData — Recent M&A Deals: 2026 Trends</a>
+        <a href="https://fortune.com/2026/03/11/exclusive-translucent-ai-native-healthcare-finance-startup-raises-27-million-series-a/" target="_blank">Fortune — Translucent raises $27M Series A</a>
+        <a href="https://techstartups.com/2026/03/17/top-startup-and-tech-funding-news-march-17-2025/" target="_blank">TechStartups — Funding News, March 2026</a>
+        <a href="https://www.modernhealthcare.com/health-tech/mh-top-funding-nitra-translucent-nadia-care/" target="_blank">Modern Healthcare — Top Digital Health Funding</a>
+    </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+function copyBrief() {
+    const text = `Avera Daily Brief — March 23, 2026
+
+Here's what happened this week in M&A and fundraising that's worth knowing about.
+
+DEALS
+
+IBM acquires Confluent — $11B (Mar 17)
+Enterprise data infrastructure play. IBM buying the Kafka company signals continued consolidation in data infrastructure.
+
+ServiceNow acquiring Armis — $7.75B (expected close 2026)
+Cybersecurity continues to consolidate. ServiceNow expanding its security platform.
+
+Abbott / Exact Sciences — ~$21B
+Medtech megadeal, diagnostics consolidation.
+
+Kimberly-Clark / Kenvue — $48.7B
+Largest consumer health deal in a while.
+
+The pattern: deal count is down, deal value is up. Companies are buying capabilities, not just scale. About a third of the 100 largest corporate transactions are now citing AI as strategic rationale.
+
+FUNDRAISING
+
+Grow Therapy — $150M Series D (Mar 3) — led by TCV, Goldman Sachs. $3B valuation. Mental health platform. IN YOUR PIPELINE. Fresh raise means they're in growth mode and may be thinking about acquisitions.
+
+Turquoise Health — $40M Series C (Mar 17) — led by Oak HC/FT, a16z. Healthcare pricing and payments.
+
+Translucent — $27M Series A (Mar 11) — led by GV, NEA. AI-native healthcare finance.
+
+Conduit Health — $17M — led by Drive Capital. Home healthcare.
+
+Mestag Therapeutics — $40M — Immuno-oncology, heading into clinical trials.
+
+WHAT I'M WATCHING
+
+Mental health continues to be one of the most active sectors. Grow Therapy, Talkiatry ($210M Series D in February), and Headway ($2.3B valuation) are all scaling fast, and the sector is ripe for consolidation.
+
+The healthcare AI space is also heating up. Hippocratic AI hit a $3.5B valuation, Tennr raised $101M for AI patient referrals, and Nabla is now in 85,000+ clinician workflows. These are the kinds of companies that will be both acquirers and acquisition targets in the next 12 to 18 months.
+
+Talk soon,
+Ilene`;
+
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avera Morning Brief</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8f9fc;
+      --surface: #ffffff;
+      --surface-2: #f1f3f8;
+      --border: #e5e7ef;
+      --text: #1a1d2e;
+      --text-dim: #6b7194;
+      --accent: #6c5ce7;
+      --accent-light: #ebe8ff;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .header-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .header .date {
+      font-size: 15px;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    .header .sample-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--amber);
+      background: #fef3c7;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 12px;
+    }
+
+    /* Action bar */
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: #5b4bd5;
+      border-color: #5b4bd5;
+      color: #fff;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--text);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .section-icon.deals { background: #ede9fe; }
+    .section-icon.funding { background: #d1fae5; }
+    .section-icon.pipeline { background: var(--accent-light); }
+    .section-icon.signals { background: #fef3c7; }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .section-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: var(--surface-2);
+      padding: 2px 10px;
+      border-radius: 20px;
+      margin-left: auto;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      user-select: none;
+    }
+
+    .card-header:hover {
+      background: var(--surface-2);
+    }
+
+    .card-chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      color: var(--text-dim);
+      transition: transform 0.2s ease;
+    }
+
+    .card.open .card-chevron {
+      transform: rotate(90deg);
+    }
+
+    .card-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .tag-amount {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .tag-sector {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .tag-round {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .card-detail {
+      display: none;
+      padding: 0 20px 16px 54px;
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .card.open .card-detail {
+      display: block;
+    }
+
+    /* Pipeline matches */
+    .pipeline-match {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 10px;
+    }
+
+    .pipeline-match-sector {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .pipeline-match-prospects {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .pipeline-match-prospects strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .pipeline-empty {
+      background: var(--surface);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .pipeline-empty code {
+      background: var(--surface-2);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    /* Signal cards */
+    .signal-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .signal-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .signal-indicator.up { background: var(--green); }
+    .signal-indicator.neutral { background: var(--amber); }
+    .signal-indicator.down { background: var(--red); }
+
+    .signal-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .signal-detail {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1.5px solid var(--border);
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .footer-note a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-note a:hover {
+      text-decoration: underline;
+    }
+
+    /* Print styles */
+    @media print {
+      body { background: #fff; }
+      .container { padding: 0; max-width: 100%; }
+      .action-bar, .toast, .footer-note { display: none; }
+      .card { break-inside: avoid; border: 1px solid #ddd; }
+      .card.open .card-detail { display: block; }
+      .card-header:hover { background: none; }
+      .signal-card { break-inside: avoid; }
+      .section { break-inside: avoid; }
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 20px 14px 48px; }
+      .header h1 { font-size: 22px; }
+      .card-header { padding: 14px 16px; }
+      .card-detail { padding: 0 16px 14px 46px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-label">Daily Intelligence</div>
+    <h1>AVERA MORNING BRIEF</h1>
+    <div class="date" id="brief-date"></div>
+    <div class="sample-badge">Sample Data — Not Live</div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="refreshBrief()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      Refresh Brief
+    </button>
+    <button class="btn" onclick="shareBrief()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Share Brief
+    </button>
+    <button class="btn" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print
+    </button>
+  </div>
+
+  <div id="deals-section"></div>
+  <div id="funding-section"></div>
+  <div id="pipeline-section"></div>
+  <div id="signals-section"></div>
+
+  <div class="footer">
+    <p class="footer-note">
+      Connect your news API key to get live data.<br>
+      <a href="#">Settings</a> &middot; Built for <strong>Avera Advisory</strong>
+    </p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Sample Data Pool ──
+
+const ALL_DEALS = [
+  {
+    acquirer: "UnitedHealth Group",
+    target: "Amedisys",
+    size: "$3.3B",
+    sector: "Home Health",
+    summary: "UnitedHealth expands home health footprint with Amedisys acquisition",
+    detail: "UnitedHealth Group's Optum division is acquiring Amedisys, one of the largest home health and hospice providers in the US, in an all-cash transaction. The deal strengthens Optum's value-based care capabilities and expands its reach into post-acute care services across 37 states."
+  },
+  {
+    acquirer: "CVS Health",
+    target: "Oak Street Health",
+    size: "$10.6B",
+    sector: "Primary Care",
+    summary: "CVS deepens primary care push with Oak Street Health deal",
+    detail: "CVS Health completed its acquisition of Oak Street Health, a network of value-based primary care centers focused on Medicare patients. The deal accelerates CVS's transformation from pharmacy retailer to integrated healthcare company, adding over 170 medical centers in 21 states."
+  },
+  {
+    acquirer: "Amazon",
+    target: "One Medical",
+    size: "$3.9B",
+    sector: "Primary Care",
+    summary: "Amazon closes One Medical acquisition, entering primary care market",
+    detail: "Amazon finalized its purchase of One Medical (1Life Healthcare), gaining a membership-based primary care platform with over 200 locations. The deal signals Amazon's commitment to disrupting traditional healthcare delivery through tech-enabled primary care."
+  },
+  {
+    acquirer: "Roper Technologies",
+    target: "Syntellis Health Analytics",
+    size: "$1.3B",
+    sector: "Health IT",
+    summary: "Roper acquires Syntellis to expand healthcare analytics portfolio",
+    detail: "Roper Technologies acquired Syntellis Health Analytics, a provider of enterprise performance management and strategic analytics solutions for healthcare organizations. The acquisition adds budgeting, financial planning, and workforce analytics capabilities to Roper's healthcare IT segment."
+  },
+  {
+    acquirer: "Acadia Healthcare",
+    target: "ClearView Behavioral",
+    size: "$480M",
+    sector: "Behavioral Health",
+    summary: "Acadia Healthcare acquires ClearView to expand behavioral health network",
+    detail: "Acadia Healthcare is acquiring ClearView Behavioral, a multi-state behavioral health platform operating 22 treatment facilities. The deal expands Acadia's inpatient and outpatient behavioral health capacity amid rising demand for mental health services."
+  },
+  {
+    acquirer: "Thoma Bravo",
+    target: "NextGen Healthcare",
+    size: "$1.8B",
+    sector: "Health IT",
+    summary: "Thoma Bravo takes NextGen Healthcare private in cloud EHR play",
+    detail: "Private equity firm Thoma Bravo is acquiring NextGen Healthcare, a cloud-based EHR and practice management platform serving ambulatory practices. The take-private deal will allow NextGen to accelerate its cloud migration and expand its data analytics offerings."
+  },
+  {
+    acquirer: "Elevance Health",
+    target: "Paragon Healthcare",
+    size: "$850M",
+    sector: "Specialty Pharma",
+    summary: "Elevance acquires Paragon to build infusion services capability",
+    detail: "Elevance Health is acquiring Paragon Healthcare, a specialty infusion services company, to expand its CarelonRx pharmacy benefits segment. The deal adds ambulatory infusion centers and home infusion services, positioning Elevance to capture more of the specialty pharma value chain."
+  },
+  {
+    acquirer: "Becton Dickinson",
+    target: "Edwards Lifesciences Critical Care",
+    size: "$4.2B",
+    sector: "MedTech",
+    summary: "BD acquires Edwards Critical Care to build patient monitoring platform",
+    detail: "Becton Dickinson is acquiring Edwards Lifesciences' Critical Care product group, which includes hemodynamic monitoring and related technologies. The deal creates a connected care platform combining BD's infusion systems with Edwards' monitoring capabilities."
+  },
+  {
+    acquirer: "Molina Healthcare",
+    target: "ConnectCare Health",
+    size: "$620M",
+    sector: "Managed Care",
+    summary: "Molina acquires ConnectCare to add Medicaid lives in three new states",
+    detail: "Molina Healthcare is acquiring ConnectCare Health, a Medicaid managed care plan operating in three states where Molina does not currently have contracts. The acquisition adds approximately 400,000 Medicaid members and is consistent with Molina's strategy of growth through acquiring underperforming health plans."
+  }
+];
+
+const ALL_FUNDING = [
+  {
+    company: "Abridge",
+    round: "Series C",
+    amount: "$150M",
+    lead: "Lightspeed Venture Partners",
+    sector: "Health IT",
+    detail: "Abridge, an AI-powered clinical documentation company, raised $150M to scale its ambient listening platform that auto-generates clinical notes from patient-provider conversations. The company partners with major health systems including UPMC and Yale."
+  },
+  {
+    company: "Transcarent",
+    round: "Series D",
+    amount: "$126M",
+    lead: "General Catalyst",
+    sector: "Digital Health",
+    detail: "Transcarent raised $126M at a $2.2B valuation for its health and care navigation platform for self-insured employers. The company's AI-powered platform helps employees navigate the healthcare system and access virtual and in-person care."
+  },
+  {
+    company: "Lyra Health",
+    round: "Series F",
+    amount: "$200M",
+    lead: "Dragoneer Investment Group",
+    sector: "Behavioral Health",
+    detail: "Lyra Health raised $200M for its mental health benefits platform, maintaining its $5.6B valuation. The company provides therapy, coaching, and self-care tools to employees at over 250 large employers including Morgan Stanley and Zoom."
+  },
+  {
+    company: "Waymark",
+    round: "Series B",
+    amount: "$45M",
+    lead: "a16z",
+    sector: "Value-Based Care",
+    detail: "Waymark raised $45M for its AI-powered care management platform focused on Medicaid populations. The company works with health plans to identify and engage high-risk members, using AI to automate care coordination workflows."
+  },
+  {
+    company: "Docera Health",
+    round: "Series A",
+    amount: "$28M",
+    lead: "NEA",
+    sector: "Health IT",
+    detail: "Docera Health raised $28M for its clinical AI copilot that helps physicians with diagnosis support and treatment planning. The platform integrates with major EHR systems and uses retrieval-augmented generation to reference medical literature in real time."
+  },
+  {
+    company: "Talkiatry",
+    round: "Series C",
+    amount: "$130M",
+    lead: "Andreessen Horowitz",
+    sector: "Behavioral Health",
+    detail: "Talkiatry, an in-network psychiatric care platform, raised $130M to expand its network of employed psychiatrists. The company operates in all 50 states and differentiates by employing W-2 psychiatrists rather than using contractors."
+  },
+  {
+    company: "PulseSync",
+    round: "Series B",
+    amount: "$62M",
+    lead: "General Atlantic",
+    sector: "Remote Monitoring",
+    detail: "PulseSync raised $62M for its AI-powered remote patient monitoring platform focused on chronic disease management in cardiology and pulmonology. The platform uses continuous biometric data to predict clinical deterioration before symptoms appear."
+  },
+  {
+    company: "CareStack",
+    round: "Series C",
+    amount: "$90M",
+    lead: "Insight Partners",
+    sector: "Dental Tech",
+    detail: "CareStack raised $90M for its cloud-based dental practice management and patient engagement platform. The company serves over 5,000 dental practices and is expanding into AI-powered treatment planning and revenue cycle management."
+  },
+  {
+    company: "Nourish",
+    round: "Series B",
+    amount: "$55M",
+    lead: "Thrive Capital",
+    sector: "Digital Health",
+    detail: "Nourish raised $55M for its virtual nutrition care platform that connects patients with registered dietitians. The company works directly with health plans and has grown to cover 80M+ lives through insurance partnerships."
+  }
+];
+
+const ALL_SIGNALS = [
+  {
+    text: "Mental health M&A activity up 40% QoQ",
+    detail: "Behavioral health deals surged in the past quarter, driven by demand from PE-backed platforms seeking scale and payer interest in integrated mental health services.",
+    direction: "up"
+  },
+  {
+    text: "Health IT valuations compressing — median EV/Revenue down to 5.2x from 8.1x",
+    detail: "Public health IT multiples continued their decline, bringing private market expectations closer to historical norms. Buyers are finding more reasonable entry points.",
+    direction: "down"
+  },
+  {
+    text: "PE dry powder in healthcare exceeds $120B — expect accelerated deal pace",
+    detail: "Private equity firms focused on healthcare services have record levels of uninvested capital, with pressure to deploy. Expect increased competition for quality platform assets.",
+    direction: "up"
+  },
+  {
+    text: "AI clinical documentation companies attracting outsized funding rounds",
+    detail: "Ambient AI documentation startups (Abridge, Nabla, DeepScribe) are raising large rounds as health systems seek productivity gains. Acquirers include major EHR vendors eyeing bolt-on acquisitions.",
+    direction: "up"
+  },
+  {
+    text: "Payer-provider convergence trend continues with 3 major vertical deals this quarter",
+    detail: "Insurance companies are increasingly acquiring care delivery assets to control costs and capture margins across the value chain. This trend shows no signs of slowing.",
+    direction: "neutral"
+  },
+  {
+    text: "Home health M&A paused as CMS finalizes new reimbursement rates",
+    detail: "Pending regulatory clarity on home health reimbursement has created a temporary pause in deal activity. Expect a wave of transactions once new rates are published in Q2.",
+    direction: "down"
+  },
+  {
+    text: "Value-based care enablement remains the most active healthtech subsector for fundraising",
+    detail: "Startups helping providers transition to value-based contracts raised over $800M collectively this quarter. Risk adjustment, care management, and analytics tools dominate.",
+    direction: "up"
+  }
+];
+
+// ── Helpers ──
+
+function getToday() {
+  const d = new Date();
+  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pick(arr, n) {
+  return shuffle(arr).slice(0, n);
+}
+
+function chevronSVG() {
+  return '<svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+}
+
+function toggleCard(el) {
+  el.closest('.card').classList.toggle('open');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── Render ──
+
+let currentDeals = [];
+let currentFunding = [];
+let currentSignals = [];
+
+function renderDeals(deals) {
+  currentDeals = deals;
+  let html = `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon deals">&#128176;</div>
+        <div class="section-title">M&A Deals</div>
+        <div class="section-count">${deals.length} deals</div>
+      </div>`;
+  deals.forEach(d => {
+    html += `
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)">
+          ${chevronSVG()}
+          <div class="card-main">
+            <div class="card-title">${d.acquirer} &rarr; ${d.target}</div>
+            <div class="card-subtitle">${d.summary}</div>
+            <div class="card-meta">
+              <span class="tag tag-amount">${d.size}</span>
+              <span class="tag tag-sector">${d.sector}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-detail">${d.detail}</div>
+      </div>`;
+  });
+  html += '</div>';
+  document.getElementById('deals-section').innerHTML = html;
+}
+
+function renderFunding(rounds) {
+  currentFunding = rounds;
+  let html = `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon funding">&#128200;</div>
+        <div class="section-title">Fundraising Rounds</div>
+        <div class="section-count">${rounds.length} rounds</div>
+      </div>`;
+  rounds.forEach(r => {
+    html += `
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)">
+          ${chevronSVG()}
+          <div class="card-main">
+            <div class="card-title">${r.company} — ${r.round}</div>
+            <div class="card-subtitle">${r.amount} led by ${r.lead}</div>
+            <div class="card-meta">
+              <span class="tag tag-round">${r.round}</span>
+              <span class="tag tag-sector">${r.sector}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-detail">${r.detail}</div>
+      </div>`;
+  });
+  html += '</div>';
+  document.getElementById('funding-section').innerHTML = html;
+}
+
+function renderPipeline(deals, funding) {
+  const raw = localStorage.getItem('avera-prospects');
+  let html = `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon pipeline">&#127919;</div>
+        <div class="section-title">Relevant to Your Pipeline</div>
+      </div>`;
+
+  if (!raw) {
+    html += `
+      <div class="pipeline-empty">
+        No prospects found. Add prospects to <code>localStorage</code> key <code>"avera-prospects"</code> as JSON.<br>
+        <span style="margin-top:8px;display:inline-block;font-size:11px;color:var(--text-dim);">
+          Format: <code>[{"name":"Acme Health","sector":"Behavioral Health"}, ...]</code>
+        </span>
+      </div>`;
+  } else {
+    try {
+      const prospects = JSON.parse(raw);
+      const newsSectors = new Set();
+      deals.forEach(d => newsSectors.add(d.sector));
+      funding.forEach(f => newsSectors.add(f.sector));
+
+      const matches = {};
+      prospects.forEach(p => {
+        const s = p.sector || '';
+        if (newsSectors.has(s)) {
+          if (!matches[s]) matches[s] = [];
+          matches[s].push(p.name);
+        }
+      });
+
+      const sectors = Object.keys(matches);
+      if (sectors.length === 0) {
+        html += `<div class="pipeline-empty">No sector matches between today's news and your pipeline prospects.</div>`;
+      } else {
+        sectors.forEach(s => {
+          html += `
+            <div class="pipeline-match">
+              <div class="pipeline-match-sector">${s}</div>
+              <div class="pipeline-match-prospects">
+                Pipeline prospects: <strong>${matches[s].join('</strong>, <strong>')}</strong>
+              </div>
+            </div>`;
+        });
+      }
+    } catch (e) {
+      html += `<div class="pipeline-empty">Error parsing avera-prospects from localStorage. Ensure it's valid JSON.</div>`;
+    }
+  }
+
+  html += '</div>';
+  document.getElementById('pipeline-section').innerHTML = html;
+}
+
+function renderSignals(signals) {
+  currentSignals = signals;
+  let html = `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon signals">&#128225;</div>
+        <div class="section-title">Market Signals</div>
+      </div>`;
+  signals.forEach(s => {
+    html += `
+      <div class="signal-card">
+        <div class="signal-indicator ${s.direction}"></div>
+        <div>
+          <div class="signal-text">${s.text}</div>
+          <div class="signal-detail">${s.detail}</div>
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  document.getElementById('signals-section').innerHTML = html;
+}
+
+function renderAll() {
+  const deals = pick(ALL_DEALS, 5);
+  const funding = pick(ALL_FUNDING, 5);
+  const signals = pick(ALL_SIGNALS, 3);
+
+  renderDeals(deals);
+  renderFunding(funding);
+  renderPipeline(deals, funding);
+  renderSignals(signals);
+}
+
+function refreshBrief() {
+  renderAll();
+  showToast('Brief refreshed with new sample data');
+}
+
+function shareBrief() {
+  let text = `AVERA MORNING BRIEF\n${getToday()}\n${'─'.repeat(40)}\n\n`;
+
+  text += `M&A DEALS\n`;
+  currentDeals.forEach(d => {
+    text += `  ${d.acquirer} → ${d.target} (${d.size}) — ${d.sector}\n  ${d.summary}\n\n`;
+  });
+
+  text += `FUNDRAISING ROUNDS\n`;
+  currentFunding.forEach(r => {
+    text += `  ${r.company} — ${r.round} — ${r.amount} (led by ${r.lead}) — ${r.sector}\n`;
+  });
+
+  text += `\nMARKET SIGNALS\n`;
+  currentSignals.forEach(s => {
+    const arrow = s.direction === 'up' ? '↑' : s.direction === 'down' ? '↓' : '→';
+    text += `  ${arrow} ${s.text}\n`;
+  });
+
+  text += `\n${'─'.repeat(40)}\nSample data — connect API for live brief.\n`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Plain-text brief copied to clipboard');
+  }).catch(() => {
+    showToast('Could not copy — check clipboard permissions');
+  });
+}
+
+// ── Init ──
+document.getElementById('brief-date').textContent = getToday();
+renderAll();
+</script>
+
+</body>
+</html>

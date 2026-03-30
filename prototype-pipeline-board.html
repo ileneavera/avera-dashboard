@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avera — Deal Pipeline Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8f9fc;
+            --surface: #ffffff;
+            --surface-2: #f1f3f8;
+            --border: #e5e7ef;
+            --text: #1a1d2e;
+            --text-dim: #6b7194;
+            --accent: #6c5ce7;
+            --accent-light: #ebe8ff;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .header h1 span {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .header-stats {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: #5a4bd4; }
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--border); }
+
+        /* Board */
+        .board {
+            display: flex;
+            gap: 16px;
+            padding: 20px 24px;
+            height: calc(100vh - 65px);
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        .board::-webkit-scrollbar { height: 8px; }
+        .board::-webkit-scrollbar-track { background: transparent; }
+        .board::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        /* Column */
+        .column {
+            min-width: 280px;
+            max-width: 280px;
+            background: var(--surface-2);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+        }
+        .column.drag-over {
+            outline: 2px dashed var(--accent);
+            outline-offset: -2px;
+            background: var(--accent-light);
+        }
+        .column-header {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .column-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+        }
+        .column-count {
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--surface);
+            color: var(--text-dim);
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .column-cards {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 10px 14px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .column-cards::-webkit-scrollbar { width: 4px; }
+        .column-cards::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        /* Card */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+            cursor: grab;
+            transition: box-shadow 0.15s, transform 0.15s;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+        .card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-1px);
+        }
+        .card.dragging {
+            opacity: 0.4;
+            transform: rotate(2deg);
+        }
+        .card-company {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .card-sector {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        .card-meta {
+            font-size: 12px;
+            color: var(--text-dim);
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .card-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-meta-icon {
+            width: 14px;
+            text-align: center;
+            flex-shrink: 0;
+            font-size: 11px;
+        }
+
+        /* Sector colors */
+        .sector-saas, .sector-software { background: #ede9fe; color: #7c3aed; border-color: #7c3aed; }
+        .sector-fintech, .sector-finance { background: #dbeafe; color: #2563eb; border-color: #2563eb; }
+        .sector-healthtech, .sector-health, .sector-healthcare { background: #d1fae5; color: #059669; border-color: #059669; }
+        .sector-ai, .sector-ml { background: #fce7f3; color: #db2777; border-color: #db2777; }
+        .sector-ecommerce, .sector-commerce, .sector-consumer { background: #ffedd5; color: #ea580c; border-color: #ea580c; }
+        .sector-edtech, .sector-education { background: #fef9c3; color: #a16207; border-color: #a16207; }
+        .sector-marketplace { background: #ccfbf1; color: #0d9488; border-color: #0d9488; }
+        .sector-default { background: var(--surface-2); color: var(--text-dim); border-color: var(--text-dim); }
+
+        /* Card border matches sector */
+        .card[data-sector-class="sector-saas"] { border-left-color: #7c3aed; }
+        .card[data-sector-class="sector-software"] { border-left-color: #7c3aed; }
+        .card[data-sector-class="sector-fintech"] { border-left-color: #2563eb; }
+        .card[data-sector-class="sector-finance"] { border-left-color: #2563eb; }
+        .card[data-sector-class="sector-healthtech"] { border-left-color: #059669; }
+        .card[data-sector-class="sector-health"] { border-left-color: #059669; }
+        .card[data-sector-class="sector-healthcare"] { border-left-color: #059669; }
+        .card[data-sector-class="sector-ai"] { border-left-color: #db2777; }
+        .card[data-sector-class="sector-ml"] { border-left-color: #db2777; }
+        .card[data-sector-class="sector-ecommerce"] { border-left-color: #ea580c; }
+        .card[data-sector-class="sector-commerce"] { border-left-color: #ea580c; }
+        .card[data-sector-class="sector-consumer"] { border-left-color: #ea580c; }
+        .card[data-sector-class="sector-edtech"] { border-left-color: #a16207; }
+        .card[data-sector-class="sector-education"] { border-left-color: #a16207; }
+        .card[data-sector-class="sector-marketplace"] { border-left-color: #0d9488; }
+        .card[data-sector-class="sector-default"] { border-left-color: var(--border); }
+
+        /* Empty column state */
+        .column-empty {
+            text-align: center;
+            padding: 24px 16px;
+            color: var(--text-dim);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* Popup overlay */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 29, 46, 0.3);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-overlay.visible {
+            display: flex;
+        }
+        .popup {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 28px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+        .popup-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--surface-2);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-dim);
+            transition: all 0.15s;
+        }
+        .popup-close:hover { background: var(--border); color: var(--text); }
+        .popup-company {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .popup-sector {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .popup-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .popup-field {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .popup-field.full { grid-column: 1 / -1; }
+        .popup-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+        }
+        .popup-value {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .popup-value.empty {
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        .popup-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+            grid-column: 1 / -1;
+        }
+        .popup-notes {
+            grid-column: 1 / -1;
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <h1>Avera <span>/ Pipeline Board</span></h1>
+        <span class="header-stats" id="headerStats"></span>
+    </div>
+    <div class="header-right">
+        <button class="btn btn-secondary" onclick="loadSampleData()">Load Sample Data</button>
+        <a href="prospect-tracker.html" class="btn btn-secondary" style="text-decoration:none;">Prospect Tracker</a>
+    </div>
+</div>
+
+<div class="board" id="board"></div>
+
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+    <div class="popup" id="popup"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'avera-prospects';
+const STAGES = [
+    'Researching',
+    'Contacted',
+    'Followed Up',
+    'Meeting Scheduled',
+    'Engaged',
+    'Closed',
+    'Passed'
+];
+
+function loadData() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch { return []; }
+}
+
+function saveData(prospects) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prospects));
+}
+
+function getSectorClass(sector) {
+    if (!sector) return 'sector-default';
+    const s = sector.toLowerCase().replace(/[\s\/&]+/g, '');
+    if (s.includes('saas')) return 'sector-saas';
+    if (s.includes('software')) return 'sector-software';
+    if (s.includes('fintech') || s.includes('finance')) return 'sector-fintech';
+    if (s.includes('health')) return 'sector-healthtech';
+    if (s.includes('ai') || s.includes('machine') || s.includes('ml')) return 'sector-ai';
+    if (s.includes('ecommerce') || s.includes('commerce') || s.includes('consumer')) return 'sector-ecommerce';
+    if (s.includes('edtech') || s.includes('education')) return 'sector-edtech';
+    if (s.includes('marketplace')) return 'sector-marketplace';
+    return 'sector-default';
+}
+
+function formatFunding(amount) {
+    if (!amount) return null;
+    const str = String(amount).replace(/[^0-9.]/g, '');
+    const num = parseFloat(str);
+    if (isNaN(num)) return amount;
+    if (num >= 1e9) return '$' + (num / 1e9).toFixed(1) + 'B';
+    if (num >= 1e6) return '$' + (num / 1e6).toFixed(1) + 'M';
+    if (num >= 1e3) return '$' + (num / 1e3).toFixed(0) + 'K';
+    return '$' + num.toLocaleString();
+}
+
+function renderBoard() {
+    const prospects = loadData();
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+
+    const grouped = {};
+    STAGES.forEach(s => grouped[s] = []);
+    prospects.forEach(p => {
+        const status = p.status || 'Researching';
+        if (grouped[status]) {
+            grouped[status].push(p);
+        } else {
+            grouped['Researching'].push(p);
+        }
+    });
+
+    const totalActive = prospects.filter(p => p.status !== 'Passed' && p.status !== 'Closed').length;
+    document.getElementById('headerStats').textContent = `${prospects.length} prospects \u00b7 ${totalActive} active`;
+
+    STAGES.forEach(stage => {
+        const col = document.createElement('div');
+        col.className = 'column';
+        col.dataset.stage = stage;
+
+        col.addEventListener('dragover', e => {
+            e.preventDefault();
+            col.classList.add('drag-over');
+        });
+        col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+        col.addEventListener('drop', e => {
+            e.preventDefault();
+            col.classList.remove('drag-over');
+            const cardId = e.dataTransfer.getData('text/plain');
+            moveCard(cardId, stage);
+        });
+
+        const cards = grouped[stage];
+
+        col.innerHTML = `
+            <div class="column-header">
+                <span class="column-title">${stage}</span>
+                <span class="column-count">${cards.length}</span>
+            </div>
+            <div class="column-cards">
+                ${cards.length === 0
+                    ? '<div class="column-empty">No prospects</div>'
+                    : cards.map(p => renderCard(p)).join('')
+                }
+            </div>
+        `;
+
+        board.appendChild(col);
+    });
+}
+
+function renderCard(prospect) {
+    const sectorClass = getSectorClass(prospect.sector);
+    const funding = formatFunding(prospect.fundingAmount);
+    const contact = prospect.leadContact || prospect.contactName || '';
+
+    return `
+        <div class="card"
+             draggable="true"
+             data-id="${prospect.id}"
+             data-sector-class="${sectorClass}"
+             ondragstart="onDragStart(event)"
+             ondragend="onDragEnd(event)"
+             onclick="showPopup('${prospect.id}')">
+            <div class="card-company">${escapeHtml(prospect.companyName)}</div>
+            ${prospect.sector
+                ? `<span class="card-sector ${sectorClass}">${escapeHtml(prospect.sector)}</span>`
+                : ''
+            }
+            <div class="card-meta">
+                ${contact
+                    ? `<div class="card-meta-row">
+                        <span class="card-meta-icon">\u{1F464}</span>
+                        <span>${escapeHtml(contact)}</span>
+                       </div>`
+                    : ''
+                }
+                ${funding
+                    ? `<div class="card-meta-row">
+                        <span class="card-meta-icon">\u{1F4B0}</span>
+                        <span>${funding}</span>
+                       </div>`
+                    : ''
+                }
+            </div>
+        </div>
+    `;
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function onDragStart(e) {
+    e.target.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', e.target.dataset.id);
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragEnd(e) {
+    e.target.classList.remove('dragging');
+    document.querySelectorAll('.column').forEach(c => c.classList.remove('drag-over'));
+}
+
+function moveCard(cardId, newStage) {
+    const prospects = loadData();
+    const prospect = prospects.find(p => p.id === cardId);
+    if (!prospect || prospect.status === newStage) return;
+    prospect.status = newStage;
+    saveData(prospects);
+    renderBoard();
+}
+
+function showPopup(id) {
+    const prospects = loadData();
+    const p = prospects.find(pr => pr.id === id);
+    if (!p) return;
+
+    const sectorClass = getSectorClass(p.sector);
+    const funding = formatFunding(p.fundingAmount);
+    const contact = p.leadContact || p.contactName || '';
+
+    const popup = document.getElementById('popup');
+    popup.innerHTML = `
+        <button class="popup-close" onclick="closePopup(event, true)">\u2715</button>
+        <div class="popup-company">${escapeHtml(p.companyName)}</div>
+        ${p.sector ? `<span class="popup-sector ${sectorClass}">${escapeHtml(p.sector)}</span>` : ''}
+        ${p.subsector ? `<div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">${escapeHtml(p.subsector)}</div>` : ''}
+        <div class="popup-details">
+            <div class="popup-field">
+                <span class="popup-label">Status</span>
+                <span class="popup-value">${escapeHtml(p.status || 'Researching')}</span>
+            </div>
+            <div class="popup-field">
+                <span class="popup-label">Funding</span>
+                <span class="popup-value ${!funding ? 'empty' : ''}">${funding || 'Not specified'}</span>
+            </div>
+            <div class="popup-field">
+                <span class="popup-label">Lead Contact</span>
+                <span class="popup-value ${!contact ? 'empty' : ''}">${escapeHtml(contact) || 'Not specified'}</span>
+            </div>
+            <div class="popup-field">
+                <span class="popup-label">Contact Title</span>
+                <span class="popup-value ${!p.contactTitle ? 'empty' : ''}">${escapeHtml(p.contactTitle) || 'Not specified'}</span>
+            </div>
+            ${p.hq ? `
+            <div class="popup-field">
+                <span class="popup-label">HQ</span>
+                <span class="popup-value">${escapeHtml(p.hq)}</span>
+            </div>` : ''}
+            ${p.fundingDate ? `
+            <div class="popup-field">
+                <span class="popup-label">Funding Date</span>
+                <span class="popup-value">${escapeHtml(p.fundingDate)}</span>
+            </div>` : ''}
+            ${p.linkedinUrl ? `
+            <div class="popup-field full">
+                <span class="popup-label">LinkedIn</span>
+                <a href="${escapeHtml(p.linkedinUrl)}" target="_blank" style="font-size:13px;color:var(--accent);word-break:break-all;">${escapeHtml(p.linkedinUrl)}</a>
+            </div>` : ''}
+            ${p.notes ? `
+            <div class="popup-divider"></div>
+            <div class="popup-field full">
+                <span class="popup-label">Notes</span>
+                <div class="popup-notes">${escapeHtml(p.notes)}</div>
+            </div>` : ''}
+        </div>
+    `;
+
+    document.getElementById('popupOverlay').classList.add('visible');
+}
+
+function closePopup(e, force) {
+    if (force || e.target === document.getElementById('popupOverlay')) {
+        document.getElementById('popupOverlay').classList.remove('visible');
+    }
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        document.getElementById('popupOverlay').classList.remove('visible');
+    }
+});
+
+function loadSampleData() {
+    const existing = loadData();
+    if (existing.length > 0) {
+        if (!confirm('This will add sample data alongside your existing prospects. Continue?')) return;
+    }
+
+    const samples = [
+        { id: 's1', companyName: 'Beacon Health', sector: 'HealthTech', subsector: 'Digital Therapeutics', status: 'Researching', leadContact: 'Sarah Kim', contactTitle: 'CEO', fundingAmount: '25000000', hq: 'San Francisco, CA', notes: 'Series B, strong product-market fit in mental health space.' },
+        { id: 's2', companyName: 'Lattice AI', sector: 'AI/ML', subsector: 'Enterprise AI', status: 'Contacted', leadContact: 'James Park', contactTitle: 'Co-founder & CEO', fundingAmount: '40000000', hq: 'New York, NY' },
+        { id: 's3', companyName: 'Paystream', sector: 'Fintech', subsector: 'Payments', status: 'Followed Up', leadContact: 'Maria Gonzalez', contactTitle: 'CFO', fundingAmount: '18000000', hq: 'Austin, TX' },
+        { id: 's4', companyName: 'CloudCart', sector: 'E-Commerce', subsector: 'Infrastructure', status: 'Meeting Scheduled', leadContact: 'David Chen', contactTitle: 'VP Corp Dev', fundingAmount: '60000000', hq: 'Seattle, WA' },
+        { id: 's5', companyName: 'EduPath', sector: 'EdTech', subsector: 'K-12', status: 'Engaged', leadContact: 'Priya Patel', contactTitle: 'CEO', fundingAmount: '12000000', hq: 'Boston, MA', notes: 'Looking to acquire a content platform. Very motivated buyer.' },
+        { id: 's6', companyName: 'NovaSoft', sector: 'SaaS', subsector: 'HR Tech', status: 'Researching', leadContact: 'Tom Rivera', contactTitle: 'Founder', fundingAmount: '30000000', hq: 'Denver, CO' },
+        { id: 's7', companyName: 'GreenField Markets', sector: 'Marketplace', subsector: 'B2B', status: 'Contacted', leadContact: 'Lisa Wang', contactTitle: 'COO', fundingAmount: '22000000', hq: 'Chicago, IL' },
+        { id: 's8', companyName: 'Veloce Analytics', sector: 'SaaS', subsector: 'Data Analytics', status: 'Closed', leadContact: 'Mike Johnson', contactTitle: 'CEO', fundingAmount: '50000000', hq: 'San Francisco, CA', notes: 'Signed engagement letter. Active mandate.' },
+        { id: 's9', companyName: 'TrueNorth Bio', sector: 'HealthTech', subsector: 'Biotech', status: 'Passed', leadContact: 'Dr. Anita Rao', contactTitle: 'CEO', fundingAmount: '8000000', hq: 'Cambridge, MA', notes: 'Too early stage for M&A. Revisit in 12 months.' },
+        { id: 's10', companyName: 'StackLayer', sector: 'Software', subsector: 'DevTools', status: 'Followed Up', leadContact: 'Chris Tanaka', contactTitle: 'CTO', fundingAmount: '35000000', hq: 'Portland, OR' },
+    ];
+
+    const existingIds = new Set(existing.map(p => p.id));
+    const toAdd = samples.filter(s => !existingIds.has(s.id));
+    if (toAdd.length > 0) {
+        saveData([...existing, ...toAdd]);
+    }
+    renderBoard();
+}
+
+renderBoard();
+</script>
+</body>
+</html>

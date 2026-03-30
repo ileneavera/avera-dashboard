@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avera — Weekly Intelligence Brief</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8f9fc;
+            --surface: #ffffff;
+            --surface-2: #f1f3f8;
+            --border: #e5e7ef;
+            --text: #1a1d2e;
+            --text-dim: #6b7194;
+            --accent: #6c5ce7;
+            --accent-light: #ebe8ff;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+
+        /* Layout */
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* Header */
+        .brief-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .brief-header .logo {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .brief-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .brief-header .date-line {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+        .brief-header .divider {
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin: 16px auto 0;
+        }
+
+        /* Print button */
+        .print-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+        .btn-print {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        .btn-print:hover { opacity: 0.85; }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+
+        /* Stat row */
+        .stat-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            flex: 1;
+            min-width: 120px;
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-box .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.1;
+        }
+        .stat-box .label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Status breakdown */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .status-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+        }
+        .status-chip .status-name {
+            font-weight: 500;
+            color: var(--text);
+        }
+        .status-chip .status-count {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Follow-up lists */
+        .followup-list {
+            list-style: none;
+        }
+        .followup-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .followup-item:last-child { border-bottom: none; }
+        .followup-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        .followup-dot.overdue { background: var(--red); }
+        .followup-dot.due { background: var(--amber); }
+        .followup-dot.meeting { background: var(--accent); }
+        .followup-body {
+            flex: 1;
+        }
+        .followup-company {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .followup-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .followup-deadline {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        .followup-deadline.overdue { color: var(--red); }
+        .followup-deadline.due { color: var(--amber); }
+        .followup-deadline.meeting { color: var(--accent); }
+
+        /* Bar chart */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bar-label {
+            width: 140px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .bar-track {
+            flex: 1;
+            height: 28px;
+            background: var(--surface-2);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 6px;
+            transition: width 0.4s ease;
+            min-width: 2px;
+        }
+        .bar-fill.hot {
+            background: linear-gradient(90deg, var(--accent), #a855f7);
+        }
+        .bar-count {
+            width: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Hot sector badge */
+        .hot-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* Needs attention table */
+        .attention-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .attention-table th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .attention-table td {
+            font-size: 13px;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        .attention-table tr:last-child td { border-bottom: none; }
+        .status-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .status-tag.contacted {
+            color: var(--amber);
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .status-tag.followed-up {
+            color: #e67e22;
+            background: rgba(230, 126, 34, 0.1);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        /* Two-column layout for follow-ups */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Print styles */
+        @media print {
+            body { background: #fff; }
+            .page { padding: 20px 0; }
+            .print-bar { display: none; }
+            .card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            .two-col { grid-template-columns: 1fr 1fr; }
+            .bar-fill { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .followup-dot { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .stat-box { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .status-tag { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .hot-badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+
+        @media (max-width: 640px) {
+            .two-col { grid-template-columns: 1fr; }
+            .stat-row { flex-direction: column; }
+            .bar-label { width: 100px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page" id="app">
+    <!-- Populated by JS -->
+</div>
+
+<script>
+(function() {
+    // ── Helpers ──
+
+    function getWeekStart() {
+        const now = new Date();
+        const day = now.getDay();
+        const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+        return new Date(now.getFullYear(), now.getMonth(), diff);
+    }
+
+    function formatDate(d) {
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+    }
+
+    function formatShortDate(dateStr) {
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return `${months[d.getMonth()]} ${d.getDate()}`;
+    }
+
+    function daysBetween(a, b) {
+        const msPerDay = 86400000;
+        return Math.floor((b - a) / msPerDay);
+    }
+
+    function parseDate(str) {
+        const d = new Date(str);
+        return isNaN(d) ? null : d;
+    }
+
+    function today() {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }
+
+    function endOfWeek() {
+        const d = today();
+        d.setDate(d.getDate() + 7);
+        return d;
+    }
+
+    function startOfWeekAgo() {
+        const d = today();
+        d.setDate(d.getDate() - 7);
+        return d;
+    }
+
+    // ── Load Data ──
+
+    function loadProspects() {
+        try {
+            const raw = localStorage.getItem('avera-prospects');
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return [];
+        }
+    }
+
+    // ── Analysis Functions ──
+
+    function getStatusBreakdown(prospects) {
+        const counts = {};
+        prospects.forEach(p => {
+            const s = p.status || 'Unknown';
+            counts[s] = (counts[s] || 0) + 1;
+        });
+        return counts;
+    }
+
+    function getOverdueFollowUps(prospects) {
+        const now = today();
+        const results = [];
+        prospects.forEach(p => {
+            const meetings = p.meetings || [];
+            meetings.forEach(m => {
+                const followUps = m.followUps || [];
+                followUps.forEach(fu => {
+                    if (fu.completed) return;
+                    const deadline = parseDate(fu.deadline);
+                    if (deadline && deadline < now) {
+                        results.push({
+                            companyName: p.companyName,
+                            description: fu.description,
+                            deadline: fu.deadline,
+                            daysOverdue: daysBetween(deadline, now)
+                        });
+                    }
+                });
+            });
+        });
+        results.sort((a, b) => b.daysOverdue - a.daysOverdue);
+        return results;
+    }
+
+    function getDueThisWeek(prospects) {
+        const now = today();
+        const end = endOfWeek();
+        const results = [];
+        prospects.forEach(p => {
+            const meetings = p.meetings || [];
+            meetings.forEach(m => {
+                const followUps = m.followUps || [];
+                followUps.forEach(fu => {
+                    if (fu.completed) return;
+                    const deadline = parseDate(fu.deadline);
+                    if (deadline && deadline >= now && deadline <= end) {
+                        results.push({
+                            companyName: p.companyName,
+                            description: fu.description,
+                            deadline: fu.deadline
+                        });
+                    }
+                });
+            });
+        });
+        results.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+        return results;
+    }
+
+    function getRecentMeetings(prospects) {
+        const weekAgo = startOfWeekAgo();
+        const now = today();
+        now.setDate(now.getDate() + 1); // include today
+        const results = [];
+        prospects.forEach(p => {
+            const meetings = p.meetings || [];
+            meetings.forEach(m => {
+                const d = parseDate(m.date);
+                if (d && d >= weekAgo && d <= now) {
+                    results.push({
+                        companyName: p.companyName,
+                        date: m.date,
+                        companyAttendees: m.companyAttendees,
+                        averaAttendees: m.averaAttendees,
+                        followUpCount: (m.followUps || []).length
+                    });
+                }
+            });
+        });
+        results.sort((a, b) => new Date(b.date) - new Date(a.date));
+        return results;
+    }
+
+    function getSectorBreakdown(prospects) {
+        const counts = {};
+        prospects.forEach(p => {
+            const s = p.sector || 'Unknown';
+            counts[s] = (counts[s] || 0) + 1;
+        });
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        return sorted;
+    }
+
+    function getNeedsAttention(prospects) {
+        const validStatuses = ['Contacted', 'Followed Up'];
+        return prospects
+            .filter(p => {
+                if (!validStatuses.includes(p.status)) return false;
+                const meetings = p.meetings || [];
+                return meetings.length === 0;
+            })
+            .sort((a, b) => {
+                // Oldest outreach first (no meetings, earliest contact)
+                const aDate = parseDate(a.fundingDate) || new Date();
+                const bDate = parseDate(b.fundingDate) || new Date();
+                return aDate - bDate;
+            });
+    }
+
+    // ── Render ──
+
+    function render() {
+        const prospects = loadProspects();
+        const app = document.getElementById('app');
+
+        const weekStart = getWeekStart();
+        const statusBreakdown = getStatusBreakdown(prospects);
+        const overdue = getOverdueFollowUps(prospects);
+        const dueThisWeek = getDueThisWeek(prospects);
+        const recentMeetings = getRecentMeetings(prospects);
+        const sectorBreakdown = getSectorBreakdown(prospects);
+        const hotSectors = sectorBreakdown.filter(([, count]) => count >= 3);
+        const needsAttention = getNeedsAttention(prospects);
+        const maxSectorCount = sectorBreakdown.length ? sectorBreakdown[0][1] : 1;
+
+        let html = '';
+
+        // ── Print bar ──
+        html += `
+            <div class="print-bar">
+                <button class="btn-print" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    Print Brief
+                </button>
+            </div>`;
+
+        // ── Header ──
+        html += `
+            <div class="brief-header">
+                <div class="logo">AVERA</div>
+                <h1>WEEKLY INTELLIGENCE BRIEF</h1>
+                <div class="date-line">Week of ${formatDate(weekStart)}</div>
+                <div class="divider"></div>
+            </div>`;
+
+        // ── Pipeline Summary ──
+        html += `
+            <div class="card">
+                <div class="card-title">Pipeline Summary</div>
+                <div class="stat-row">
+                    <div class="stat-box">
+                        <div class="number">${prospects.length}</div>
+                        <div class="label">Total Prospects</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" style="color: var(--red)">${overdue.length}</div>
+                        <div class="label">Overdue Items</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" style="color: var(--amber)">${dueThisWeek.length}</div>
+                        <div class="label">Due This Week</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" style="color: var(--green)">${recentMeetings.length}</div>
+                        <div class="label">Meetings (7d)</div>
+                    </div>
+                </div>
+                ${Object.keys(statusBreakdown).length > 0 ? `
+                    <div class="status-grid">
+                        ${Object.entries(statusBreakdown)
+                            .sort((a, b) => b[1] - a[1])
+                            .map(([status, count]) => `
+                                <div class="status-chip">
+                                    <span class="status-name">${status}</span>
+                                    <span class="status-count">${count}</span>
+                                </div>`).join('')}
+                    </div>` : ''}
+            </div>`;
+
+        // ── Overdue + Due This Week (two columns) ──
+        html += `<div class="two-col">`;
+
+        // Overdue
+        html += `
+            <div class="card">
+                <div class="card-title" style="color: var(--red)">Overdue Follow-Ups</div>
+                ${overdue.length === 0
+                    ? '<div class="empty-state">No overdue items</div>'
+                    : `<ul class="followup-list">
+                        ${overdue.map(fu => `
+                            <li class="followup-item">
+                                <div class="followup-dot overdue"></div>
+                                <div class="followup-body">
+                                    <div class="followup-company">${fu.companyName}</div>
+                                    <div class="followup-desc">${fu.description}</div>
+                                    <div class="followup-deadline overdue">${fu.daysOverdue} day${fu.daysOverdue !== 1 ? 's' : ''} overdue (${formatShortDate(fu.deadline)})</div>
+                                </div>
+                            </li>`).join('')}
+                    </ul>`}
+            </div>`;
+
+        // Due This Week
+        html += `
+            <div class="card">
+                <div class="card-title" style="color: var(--amber)">Due This Week</div>
+                ${dueThisWeek.length === 0
+                    ? '<div class="empty-state">No follow-ups due this week</div>'
+                    : `<ul class="followup-list">
+                        ${dueThisWeek.map(fu => `
+                            <li class="followup-item">
+                                <div class="followup-dot due"></div>
+                                <div class="followup-body">
+                                    <div class="followup-company">${fu.companyName}</div>
+                                    <div class="followup-desc">${fu.description}</div>
+                                    <div class="followup-deadline due">Due ${formatShortDate(fu.deadline)}</div>
+                                </div>
+                            </li>`).join('')}
+                    </ul>`}
+            </div>`;
+
+        html += `</div>`;
+
+        // ── Recent Meetings ──
+        html += `
+            <div class="card">
+                <div class="card-title">Recent Meetings (Past 7 Days)</div>
+                ${recentMeetings.length === 0
+                    ? '<div class="empty-state">No meetings in the past 7 days</div>'
+                    : `<ul class="followup-list">
+                        ${recentMeetings.map(m => `
+                            <li class="followup-item">
+                                <div class="followup-dot meeting"></div>
+                                <div class="followup-body">
+                                    <div class="followup-company">${m.companyName}</div>
+                                    <div class="followup-desc">
+                                        ${m.companyAttendees ? `Company: ${m.companyAttendees}` : ''}
+                                        ${m.companyAttendees && m.averaAttendees ? ' &middot; ' : ''}
+                                        ${m.averaAttendees ? `Avera: ${m.averaAttendees}` : ''}
+                                    </div>
+                                    <div class="followup-deadline meeting">${formatShortDate(m.date)}${m.followUpCount > 0 ? ` &middot; ${m.followUpCount} follow-up${m.followUpCount !== 1 ? 's' : ''}` : ''}</div>
+                                </div>
+                            </li>`).join('')}
+                    </ul>`}
+            </div>`;
+
+        // ── Sector Breakdown ──
+        html += `
+            <div class="card">
+                <div class="card-title">Sector Breakdown</div>
+                ${sectorBreakdown.length === 0
+                    ? '<div class="empty-state">No sector data available</div>'
+                    : `<div class="bar-chart">
+                        ${sectorBreakdown.map(([sector, count]) => {
+                            const pct = Math.round((count / maxSectorCount) * 100);
+                            const isHot = count >= 3;
+                            return `
+                                <div class="bar-row">
+                                    <div class="bar-label">
+                                        ${sector}${isHot ? '<span class="hot-badge">HOT</span>' : ''}
+                                    </div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill${isHot ? ' hot' : ''}" style="width: ${pct}%"></div>
+                                    </div>
+                                    <div class="bar-count">${count}</div>
+                                </div>`;
+                        }).join('')}
+                    </div>`}
+            </div>`;
+
+        // ── Needs Attention ──
+        html += `
+            <div class="card">
+                <div class="card-title">Needs Attention</div>
+                <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 12px;">
+                    Prospects with status "Contacted" or "Followed Up" and no meetings scheduled
+                </div>
+                ${needsAttention.length === 0
+                    ? '<div class="empty-state">All contacted prospects have meetings</div>'
+                    : `<table class="attention-table">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Sector</th>
+                                <th>Status</th>
+                                <th>Stage</th>
+                                <th>Outreach Hook</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${needsAttention.map(p => {
+                                const statusClass = p.status === 'Contacted' ? 'contacted' : 'followed-up';
+                                return `
+                                    <tr>
+                                        <td style="font-weight: 600">${p.companyName || '--'}</td>
+                                        <td>${p.sector || '--'}</td>
+                                        <td><span class="status-tag ${statusClass}">${p.status}</span></td>
+                                        <td>${p.stage || '--'}</td>
+                                        <td style="color: var(--text-dim); max-width: 200px">${p.outreachHook || '--'}</td>
+                                    </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>`}
+            </div>`;
+
+        app.innerHTML = html;
+    }
+
+    // ── Seed demo data if localStorage is empty (for preview) ──
+
+    function seedDemoData() {
+        if (localStorage.getItem('avera-prospects')) return;
+
+        const now = new Date();
+        const daysAgo = n => { const d = new Date(now); d.setDate(d.getDate() - n); return d.toISOString().split('T')[0]; };
+        const daysFromNow = n => { const d = new Date(now); d.setDate(d.getDate() + n); return d.toISOString().split('T')[0]; };
+
+        const demo = [
+            {
+                id: '1', companyName: 'Vantage Health', website: 'vantagehealth.com', hq: 'New York, NY', nycBased: true,
+                sector: 'HealthTech', subsector: 'Digital Health', stage: 'Series C', fundingAmount: '$45M',
+                fundingDate: '2025-09-01', leadInvestors: 'a16z', leadContact: 'Sarah Kim',
+                contactTitle: 'CEO', whyMAFits: 'Looking to consolidate point solutions', outreachHook: 'Recent fundraise positions them for acquisitions',
+                status: 'Contacted', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: []
+            },
+            {
+                id: '2', companyName: 'NovaPay', website: 'novapay.io', hq: 'San Francisco, CA', nycBased: false,
+                sector: 'Fintech', subsector: 'Payments', stage: 'Series B', fundingAmount: '$30M',
+                fundingDate: '2025-11-15', leadInvestors: 'Ribbit Capital', leadContact: 'James Ortiz',
+                contactTitle: 'Founder & CEO', whyMAFits: 'Wants to expand into lending via acquisition', outreachHook: 'Competitor just acquired a lending startup',
+                status: 'Followed Up', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: []
+            },
+            {
+                id: '3', companyName: 'Luminary AI', website: 'luminaryai.com', hq: 'New York, NY', nycBased: true,
+                sector: 'AI/ML', subsector: 'Enterprise AI', stage: 'Series C', fundingAmount: '$60M',
+                fundingDate: '2026-01-10', leadInvestors: 'Sequoia', leadContact: 'Priya Desai',
+                contactTitle: 'CEO', whyMAFits: 'Acqui-hire targets in NLP space', outreachHook: 'Team scaling challenges, M&A as talent strategy',
+                status: 'Researching', teamNotes: 'Strong founder background', averaDebrief: '', additionalNotes: '',
+                meetings: [
+                    {
+                        id: 'm1', date: daysAgo(3), companyAttendees: 'Priya Desai, CTO', averaAttendees: 'Ilene Chen',
+                        notes: 'Discussed talent acquisition strategy', followUps: [
+                            { id: 'f1', description: 'Send NLP acquisition target list', deadline: daysFromNow(3), completed: false },
+                            { id: 'f2', description: 'Intro to legal counsel', deadline: daysAgo(2), completed: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: '4', companyName: 'GreenRoute', website: 'greenroute.co', hq: 'Austin, TX', nycBased: false,
+                sector: 'CleanTech', subsector: 'Logistics', stage: 'Series B', fundingAmount: '$22M',
+                fundingDate: '2025-08-20', leadInvestors: 'Lowercarbon Capital', leadContact: 'Mike Chen',
+                contactTitle: 'CEO', whyMAFits: 'Adjacent market expansion', outreachHook: 'Recent competitor consolidation in last-mile',
+                status: 'Contacted', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: []
+            },
+            {
+                id: '5', companyName: 'Atlas Security', website: 'atlassec.io', hq: 'New York, NY', nycBased: true,
+                sector: 'Cybersecurity', subsector: 'Identity', stage: 'Series D', fundingAmount: '$80M',
+                fundingDate: '2025-06-01', leadInvestors: 'Insight Partners', leadContact: 'Rachel Tran',
+                contactTitle: 'CEO', whyMAFits: 'Looking to build identity suite via M&A', outreachHook: 'Board is pushing inorganic growth',
+                status: 'Researching', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: [
+                    {
+                        id: 'm2', date: daysAgo(5), companyAttendees: 'Rachel Tran', averaAttendees: 'Ilene Chen',
+                        notes: 'Exploratory call on M&A appetite', followUps: [
+                            { id: 'f3', description: 'Prepare identity space market map', deadline: daysFromNow(5), completed: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: '6', companyName: 'UrbanFit', website: 'urbanfit.co', hq: 'Los Angeles, CA', nycBased: false,
+                sector: 'HealthTech', subsector: 'Fitness', stage: 'Series B', fundingAmount: '$18M',
+                fundingDate: '2025-10-05', leadInvestors: 'General Catalyst', leadContact: 'David Park',
+                contactTitle: 'CEO', whyMAFits: 'Roll-up opportunity in fitness tech', outreachHook: 'Similar playbook to Wellhub acquisitions',
+                status: 'Followed Up', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: [
+                    {
+                        id: 'm3', date: daysAgo(14), companyAttendees: 'David Park, VP BD', averaAttendees: 'Ilene Chen',
+                        notes: 'Discussed roll-up thesis', followUps: [
+                            { id: 'f4', description: 'Share Wellhub case study deck', deadline: daysAgo(5), completed: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: '7', companyName: 'StackLayer', website: 'stacklayer.dev', hq: 'New York, NY', nycBased: true,
+                sector: 'AI/ML', subsector: 'DevTools', stage: 'Series B', fundingAmount: '$25M',
+                fundingDate: '2026-02-01', leadInvestors: 'Greylock', leadContact: 'Amit Patel',
+                contactTitle: 'Co-founder', whyMAFits: 'Wants to acquire monitoring tool', outreachHook: 'Recently mentioned M&A interest in podcast',
+                status: 'Researching', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: []
+            },
+            {
+                id: '8', companyName: 'Relay Commerce', website: 'relaycommerce.com', hq: 'Chicago, IL', nycBased: false,
+                sector: 'Fintech', subsector: 'Commerce', stage: 'Series C', fundingAmount: '$50M',
+                fundingDate: '2025-12-01', leadInvestors: 'Tiger Global', leadContact: 'Emma Liu',
+                contactTitle: 'CEO', whyMAFits: 'Strategic partnerships + tuck-in acquisitions', outreachHook: 'Expanding into embedded finance',
+                status: 'Researching', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: []
+            },
+            {
+                id: '9', companyName: 'NeuroPath', website: 'neuropath.health', hq: 'Boston, MA', nycBased: false,
+                sector: 'HealthTech', subsector: 'Mental Health', stage: 'Series B', fundingAmount: '$20M',
+                fundingDate: '2025-07-15', leadInvestors: 'Khosla Ventures', leadContact: 'Dr. Anna Reyes',
+                contactTitle: 'CEO', whyMAFits: 'Consolidation play in digital mental health', outreachHook: 'Fragmented market ripe for roll-up',
+                status: 'Contacted', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: []
+            },
+            {
+                id: '10', companyName: 'ShieldOps', website: 'shieldops.io', hq: 'Denver, CO', nycBased: false,
+                sector: 'AI/ML', subsector: 'Security Automation', stage: 'Series C', fundingAmount: '$40M',
+                fundingDate: '2025-11-01', leadInvestors: 'Bessemer', leadContact: 'Tom Reeves',
+                contactTitle: 'CEO', whyMAFits: 'Acquiring threat intel startups', outreachHook: 'Board mandate for inorganic growth',
+                status: 'Researching', teamNotes: '', averaDebrief: '', additionalNotes: '',
+                meetings: [
+                    {
+                        id: 'm4', date: daysAgo(2), companyAttendees: 'Tom Reeves, VP Corp Dev', averaAttendees: 'Ilene Chen',
+                        notes: 'Discussed acquisition criteria', followUps: [
+                            { id: 'f5', description: 'Draft engagement letter', deadline: daysFromNow(1), completed: false }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        localStorage.setItem('avera-prospects', JSON.stringify(demo));
+    }
+
+    // ── Init ──
+    seedDemoData();
+    render();
+})();
+</script>
+
+</body>
+</html>

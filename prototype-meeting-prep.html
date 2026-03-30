@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avera — Meeting Prep Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8f9fc;
+            --surface: #ffffff;
+            --surface-2: #f1f3f8;
+            --border: #e5e7ef;
+            --text: #1a1d2e;
+            --text-dim: #6b7194;
+            --accent: #6c5ce7;
+            --accent-light: #ebe8ff;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+        /* Top bar */
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .topbar h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .topbar h1 span {
+            color: var(--text-dim);
+            font-weight: 500;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+        .prospect-select {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text);
+            background: var(--surface);
+            min-width: 260px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .prospect-select:focus { border-color: var(--accent); }
+        .topbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+        .btn-primary:hover { background: #5a4bd4; }
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+        .btn-secondary:hover { background: var(--border); }
+
+        /* Content area */
+        .container {
+            max-width: 860px;
+            margin: 32px auto;
+            padding: 0 24px 64px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 80px 24px;
+        }
+        .empty-state h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.6;
+            max-width: 420px;
+            margin: 0 auto 24px;
+        }
+        .empty-state .btn-primary { display: inline-block; }
+
+        /* Briefing document */
+        .briefing { display: none; }
+        .briefing.visible { display: block; }
+
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-number {
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text);
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+        }
+        .field-grid.single-col {
+            grid-template-columns: 1fr;
+        }
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .field-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-dim);
+        }
+        .field-value {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+        .field-value a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .field-value a:hover { text-decoration: underline; }
+        .field-value.empty {
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        /* Talking points */
+        .talking-points {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .talking-points li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .tp-bullet {
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 10px;
+            font-weight: 700;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Meetings timeline */
+        .meeting-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .meeting-item:last-child { border-bottom: none; }
+        .meeting-date {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            height: fit-content;
+        }
+        .meeting-notes {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
+        /* Follow-ups */
+        .followup-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+        }
+        .followup-check {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .followup-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Notes section */
+        .notes-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .notes-line {
+            height: 36px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-badge.active { background: rgba(16,185,129,0.1); color: var(--green); }
+        .status-badge.paused { background: rgba(245,158,11,0.1); color: var(--amber); }
+        .status-badge.closed { background: rgba(239,68,68,0.1); color: var(--red); }
+        .status-badge.new { background: var(--accent-light); color: var(--accent); }
+
+        /* No data placeholder */
+        .no-data {
+            color: var(--text-dim);
+            font-size: 13px;
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        /* Demo banner */
+        .demo-banner {
+            background: var(--accent-light);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .demo-banner p {
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .demo-banner button {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ---- Print styles ---- */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                font-size: 11pt;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .topbar, .demo-banner, .btn-primary, .btn-secondary, .no-print { display: none !important; }
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .print-header {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 0;
+                border-bottom: 2px solid #1a1d2e;
+                margin-bottom: 20px;
+            }
+            .print-header h1 {
+                font-size: 18pt;
+                font-weight: 700;
+                color: #1a1d2e;
+            }
+            .print-header .print-date {
+                font-size: 10pt;
+                color: #555;
+            }
+            .print-header .print-subtitle {
+                font-size: 10pt;
+                color: #555;
+                margin-top: 2px;
+            }
+            .section {
+                border: 1px solid #ddd;
+                border-radius: 0;
+                padding: 14px 16px;
+                margin-bottom: 10px;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .section-header {
+                border-bottom: 1px solid #ddd;
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+            }
+            .section-number {
+                background: #eee;
+                color: #333;
+                border-radius: 4px;
+            }
+            .section-title { color: #1a1d2e; }
+            .field-value { font-size: 11pt; }
+            .field-label { font-size: 8pt; }
+            .meeting-date {
+                background: #eee;
+                color: #333;
+            }
+            .tp-bullet {
+                background: #eee;
+                color: #333;
+            }
+            .status-badge {
+                border: 1px solid #ccc;
+                background: none !important;
+                color: #333 !important;
+            }
+            .notes-line {
+                border-bottom: 1px solid #ccc;
+            }
+        }
+
+        /* Print header hidden on screen */
+        .print-header { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="topbar no-print">
+    <div class="topbar-left">
+        <h1>Avera <span>Meeting Prep</span></h1>
+        <select class="prospect-select" id="prospectSelect">
+            <option value="">Select a prospect...</option>
+        </select>
+    </div>
+    <div class="topbar-actions">
+        <button class="btn-secondary" id="loadDemoBtn">Load Demo Data</button>
+        <button class="btn-primary" id="printBtn" disabled>Print Briefing</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="print-header">
+        <div>
+            <h1>Avera</h1>
+            <div class="print-subtitle">Meeting Preparation Sheet</div>
+        </div>
+        <div class="print-date" id="printDate"></div>
+    </div>
+
+    <div id="emptyState" class="empty-state">
+        <h2>Meeting Prep Sheet</h2>
+        <p>Select a prospect from the dropdown to generate a printable briefing document. Data is loaded from your prospect tracker.</p>
+        <button class="btn-secondary" id="loadDemoBtnAlt">Load Demo Data</button>
+    </div>
+
+    <div id="briefing" class="briefing">
+        <!-- Section 1: Company Overview -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <div class="section-title">Company Overview</div>
+            </div>
+            <div class="field-grid">
+                <div class="field">
+                    <div class="field-label">Company</div>
+                    <div class="field-value" id="fCompanyName">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Website</div>
+                    <div class="field-value" id="fWebsite">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Headquarters</div>
+                    <div class="field-value" id="fHQ">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">NYC Based</div>
+                    <div class="field-value" id="fNYC">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Sector / Subsector</div>
+                    <div class="field-value" id="fSector">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Stage</div>
+                    <div class="field-value" id="fStage">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Funding</div>
+                    <div class="field-value" id="fFunding">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Lead Investors</div>
+                    <div class="field-value" id="fInvestors">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Status</div>
+                    <div class="field-value" id="fStatus">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Key People -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <div class="section-title">Key People</div>
+            </div>
+            <div class="field-grid">
+                <div class="field">
+                    <div class="field-label">Lead Contact</div>
+                    <div class="field-value" id="fContact">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Title</div>
+                    <div class="field-value" id="fTitle">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Business Profile -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <div class="section-title">Business Profile</div>
+            </div>
+            <div class="field-grid single-col">
+                <div class="field">
+                    <div class="field-label">Product Overview</div>
+                    <div class="field-value" id="fProduct">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Differentiators</div>
+                    <div class="field-value" id="fDiff">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Customers</div>
+                    <div class="field-value" id="fCustomers">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Churn</div>
+                    <div class="field-value" id="fChurn">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">GTM Strategy</div>
+                    <div class="field-value" id="fGTM">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Financials</div>
+                    <div class="field-value" id="fFinancials">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Market Overview</div>
+                    <div class="field-value" id="fMarket">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Competitors</div>
+                    <div class="field-value" id="fCompetitors">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: M&A Thesis -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <div class="section-title">M&A Thesis</div>
+            </div>
+            <div class="field-grid single-col">
+                <div class="field">
+                    <div class="field-label">Why M&A Fits</div>
+                    <div class="field-value" id="fWhyMA">--</div>
+                </div>
+                <div class="field">
+                    <div class="field-label">Outreach Hook</div>
+                    <div class="field-value" id="fHook">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Talking Points -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">5</div>
+                <div class="section-title">Talking Points</div>
+            </div>
+            <ul class="talking-points" id="fTalkingPoints">
+            </ul>
+        </div>
+
+        <!-- Section 6: Previous Meetings -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">6</div>
+                <div class="section-title">Previous Meetings</div>
+            </div>
+            <div id="fMeetings">
+                <p class="no-data">No previous meetings recorded.</p>
+            </div>
+        </div>
+
+        <!-- Section 7: Open Follow-Ups -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">7</div>
+                <div class="section-title">Open Follow-Ups</div>
+            </div>
+            <div id="fFollowups">
+                <p class="no-data">No open follow-ups.</p>
+            </div>
+        </div>
+
+        <!-- Section 8: Notes -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">8</div>
+                <div class="section-title">Notes</div>
+            </div>
+            <div class="notes-lines">
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+                <div class="notes-line"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'avera-prospects';
+
+    const DEMO_DATA = [
+        {
+            id: '1',
+            companyName: 'Beacon Health',
+            website: 'beaconhealth.io',
+            hq: 'New York, NY',
+            nycBased: true,
+            sector: 'Healthcare',
+            subsector: 'Digital Health',
+            stage: 'Series C',
+            fundingAmount: '$85M',
+            fundingDate: '2025-09-15',
+            leadInvestors: 'Andreessen Horowitz, General Catalyst',
+            leadContact: 'Sarah Kim',
+            contactTitle: 'CEO & Co-founder',
+            whyMAFits: 'Looking to expand into chronic care management. Acquiring a remote patient monitoring platform would accelerate their roadmap by 18+ months and give them immediate enterprise contracts.',
+            outreachHook: 'Their recent Series C positions them perfectly for a tuck-in acquisition in RPM. Warm intro possible through the a16z network.',
+            status: 'Active',
+            teamNotes: 'Strong founder-market fit. Sarah has deep clinical background. Board is supportive of inorganic growth.',
+            financials: '$22M ARR, 40% YoY growth, -15% net margin. Targeting profitability by Q4 2026.',
+            marketOverview: 'Digital health M&A surged in 2025. RPM market expected to hit $120B by 2028.',
+            competitors: 'Teladoc, Hims & Hers, Ro, Noom',
+            productOverview: 'AI-powered care coordination platform connecting patients, providers, and payers. Core product is a clinical decision-support tool used by 200+ health systems.',
+            differentiators: 'Proprietary clinical AI trained on 5M+ patient encounters. Only platform with real-time payer integration.',
+            customers: '200+ health systems, 15 payer partnerships. Average contract value $110K.',
+            churn: '~5% annual logo churn, <2% revenue churn (strong NRR at 125%).',
+            gtmStrategy: 'Enterprise sales team (12 AEs) focused on health systems. Channel partnerships with Epic and Cerner for distribution.',
+            averaDebrief: 'Initial call went well. Sarah is interested in exploring bolt-on acquisitions in Q2 2026.',
+            additionalNotes: 'Board meeting in April — want to present M&A strategy. This is our window.',
+            meetings: [
+                { date: '2026-01-15', notes: 'Intro call. Discussed Beacon\'s growth strategy and interest in inorganic expansion. Sarah mentioned they have internal bandwidth constraints for deal execution.' },
+                { date: '2026-02-20', notes: 'Follow-up on RPM target landscape. Shared 3 potential acquisition targets. Sarah asked for more detail on Target B (MedSync). Board wants a preliminary deck by April.' },
+                { date: '2026-03-10', notes: 'Deep dive on MedSync. Reviewed financials and product overlap. Sarah wants to move to preliminary diligence. Discussed Avera engagement structure.' }
+            ]
+        },
+        {
+            id: '2',
+            companyName: 'Stackline',
+            website: 'stackline.com',
+            hq: 'Seattle, WA',
+            nycBased: false,
+            sector: 'E-commerce',
+            subsector: 'Retail Analytics',
+            stage: 'Series B',
+            fundingAmount: '$45M',
+            fundingDate: '2025-03-01',
+            leadInvestors: 'Goldman Sachs Growth',
+            leadContact: 'Michael Lagoni',
+            contactTitle: 'Founder & CEO',
+            whyMAFits: 'Wants to own the full e-commerce intelligence stack. Acquiring a social commerce analytics tool would fill a major gap and open up a new buyer persona.',
+            outreachHook: 'Their Goldman raise signals readiness for M&A. Social commerce is a white space in their product — a strategic acquisition could 2x their TAM.',
+            status: 'New',
+            teamNotes: '',
+            financials: '$18M ARR, growing 55% YoY. Recently turned cash-flow positive.',
+            marketOverview: 'E-commerce analytics is consolidating. Several smaller players are acquisition candidates.',
+            competitors: 'Jungle Scout, Helium 10, Profitero',
+            productOverview: 'Market intelligence platform for e-commerce brands. Tracks pricing, market share, and advertising performance across Amazon, Walmart, and DTC.',
+            differentiators: 'Only platform with unified view across marketplace + DTC. Real-time competitive intelligence.',
+            customers: '500+ brands including Unilever, P&G, Bose. Strong enterprise traction.',
+            churn: '~8% annual logo churn. NRR 115%.',
+            gtmStrategy: 'Product-led growth with enterprise sales overlay. Self-serve tier drives inbound leads.',
+            averaDebrief: '',
+            additionalNotes: 'Potential warm intro through GS network. Have not reached out yet.',
+            meetings: []
+        }
+    ];
+
+    function loadProspects() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return [];
+            return JSON.parse(raw);
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function loadDemoData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEMO_DATA));
+        populateDropdown();
+    }
+
+    function populateDropdown() {
+        const select = document.getElementById('prospectSelect');
+        const prospects = loadProspects();
+        select.innerHTML = '<option value="">Select a prospect...</option>';
+        prospects.forEach(function(p) {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.companyName + (p.sector ? ' — ' + p.sector : '');
+            select.appendChild(opt);
+        });
+    }
+
+    function fieldOrEmpty(value) {
+        if (!value || (typeof value === 'string' && value.trim() === '')) {
+            return { text: 'Not available', isEmpty: true };
+        }
+        return { text: value, isEmpty: false };
+    }
+
+    function setField(id, value) {
+        const el = document.getElementById(id);
+        const result = fieldOrEmpty(value);
+        el.textContent = result.text;
+        el.classList.toggle('empty', result.isEmpty);
+    }
+
+    function setFieldHTML(id, html) {
+        const el = document.getElementById(id);
+        el.innerHTML = html;
+    }
+
+    function generateTalkingPoints(prospect) {
+        const points = [];
+
+        if (prospect.fundingAmount && prospect.stage) {
+            points.push('With ' + prospect.fundingAmount + ' raised at ' + prospect.stage + ', ' + prospect.companyName + ' is well-capitalized for inorganic growth. Discuss how M&A can accelerate their roadmap vs. organic build.');
+        }
+
+        if (prospect.whyMAFits) {
+            points.push('M&A thesis: ' + prospect.whyMAFits);
+        }
+
+        if (prospect.sector) {
+            points.push('Explore current consolidation trends in ' + prospect.sector + (prospect.subsector ? '/' + prospect.subsector : '') + ' and how ' + prospect.companyName + ' can be a buyer vs. being acquired.');
+        }
+
+        if (prospect.competitors) {
+            points.push('Competitive landscape includes ' + prospect.competitors + '. Discuss whether any represent acquisition targets or if there are adjacent players to consider.');
+        }
+
+        if (prospect.financials) {
+            points.push('Financial position: ' + prospect.financials + ' — frame how current unit economics support an acquisition strategy.');
+        }
+
+        if (prospect.differentiators) {
+            points.push('Key differentiator: ' + prospect.differentiators + '. Discuss how an acquisition could reinforce this moat.');
+        }
+
+        // Return 3-5 points
+        return points.slice(0, 5);
+    }
+
+    function extractFollowUps(prospect) {
+        const followUps = [];
+
+        if (prospect.meetings && prospect.meetings.length > 0) {
+            const lastMeeting = prospect.meetings[prospect.meetings.length - 1];
+            const notes = lastMeeting.notes || '';
+            // Look for action-oriented language in the last meeting
+            const actionPhrases = ['want to', 'wants to', 'asked for', 'need to', 'should', 'will send', 'follow up', 'next step', 'discuss'];
+            const sentences = notes.split(/[.!]/);
+            sentences.forEach(function(s) {
+                const trimmed = s.trim();
+                if (trimmed.length > 10) {
+                    for (var i = 0; i < actionPhrases.length; i++) {
+                        if (trimmed.toLowerCase().indexOf(actionPhrases[i]) !== -1) {
+                            followUps.push(trimmed);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
+        if (prospect.averaDebrief) {
+            const debriefSentences = prospect.averaDebrief.split(/[.!]/);
+            debriefSentences.forEach(function(s) {
+                var trimmed = s.trim();
+                if (trimmed.length > 10 && (trimmed.toLowerCase().indexOf('want') !== -1 || trimmed.toLowerCase().indexOf('interest') !== -1 || trimmed.toLowerCase().indexOf('next') !== -1)) {
+                    followUps.push(trimmed);
+                }
+            });
+        }
+
+        if (prospect.additionalNotes) {
+            var noteSentences = prospect.additionalNotes.split(/[.!]/);
+            noteSentences.forEach(function(s) {
+                var trimmed = s.trim();
+                if (trimmed.length > 10 && (trimmed.toLowerCase().indexOf('window') !== -1 || trimmed.toLowerCase().indexOf('deadline') !== -1 || trimmed.toLowerCase().indexOf('by ') !== -1 || trimmed.toLowerCase().indexOf('before') !== -1)) {
+                    followUps.push(trimmed);
+                }
+            });
+        }
+
+        // Deduplicate
+        var unique = [];
+        followUps.forEach(function(f) {
+            if (unique.indexOf(f) === -1) unique.push(f);
+        });
+        return unique;
+    }
+
+    function getStatusClass(status) {
+        if (!status) return 'new';
+        var s = status.toLowerCase();
+        if (s === 'active' || s === 'engaged') return 'active';
+        if (s === 'paused' || s === 'on hold') return 'paused';
+        if (s === 'closed' || s === 'passed' || s === 'lost') return 'closed';
+        return 'new';
+    }
+
+    function renderBriefing(prospect) {
+        document.getElementById('emptyState').style.display = 'none';
+        document.getElementById('briefing').classList.add('visible');
+        document.getElementById('printBtn').disabled = false;
+
+        // Print date
+        var today = new Date();
+        document.getElementById('printDate').textContent = today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Section 1: Company Overview
+        setField('fCompanyName', prospect.companyName);
+
+        if (prospect.website) {
+            var url = prospect.website;
+            if (url.indexOf('http') !== 0) url = 'https://' + url;
+            setFieldHTML('fWebsite', '<a href="' + url + '" target="_blank">' + prospect.website + '</a>');
+        } else {
+            setField('fWebsite', null);
+        }
+
+        setField('fHQ', prospect.hq);
+        setField('fNYC', prospect.nycBased ? 'Yes' : 'No');
+
+        var sectorText = prospect.sector || '';
+        if (prospect.subsector) sectorText += ' / ' + prospect.subsector;
+        setField('fSector', sectorText || null);
+
+        setField('fStage', prospect.stage);
+
+        var fundingText = prospect.fundingAmount || '';
+        if (prospect.fundingDate) fundingText += ' (' + prospect.fundingDate + ')';
+        setField('fFunding', fundingText || null);
+
+        setField('fInvestors', prospect.leadInvestors);
+
+        if (prospect.status) {
+            setFieldHTML('fStatus', '<span class="status-badge ' + getStatusClass(prospect.status) + '">' + prospect.status + '</span>');
+        } else {
+            setField('fStatus', null);
+        }
+
+        // Section 2: Key People
+        setField('fContact', prospect.leadContact);
+        setField('fTitle', prospect.contactTitle);
+
+        // Section 3: Business Profile
+        setField('fProduct', prospect.productOverview);
+        setField('fDiff', prospect.differentiators);
+        setField('fCustomers', prospect.customers);
+        setField('fChurn', prospect.churn);
+        setField('fGTM', prospect.gtmStrategy);
+        setField('fFinancials', prospect.financials);
+        setField('fMarket', prospect.marketOverview);
+        setField('fCompetitors', prospect.competitors);
+
+        // Section 4: M&A Thesis
+        setField('fWhyMA', prospect.whyMAFits);
+        setField('fHook', prospect.outreachHook);
+
+        // Section 5: Talking Points
+        var tpContainer = document.getElementById('fTalkingPoints');
+        var talkingPoints = generateTalkingPoints(prospect);
+        if (talkingPoints.length === 0) {
+            tpContainer.innerHTML = '<p class="no-data">Not enough data to generate talking points.</p>';
+        } else {
+            tpContainer.innerHTML = '';
+            talkingPoints.forEach(function(tp, i) {
+                var li = document.createElement('li');
+                li.innerHTML = '<span class="tp-bullet">' + (i + 1) + '</span><span>' + tp + '</span>';
+                tpContainer.appendChild(li);
+            });
+        }
+
+        // Section 6: Previous Meetings
+        var meetingsContainer = document.getElementById('fMeetings');
+        if (!prospect.meetings || prospect.meetings.length === 0) {
+            meetingsContainer.innerHTML = '<p class="no-data">No previous meetings recorded.</p>';
+        } else {
+            meetingsContainer.innerHTML = '';
+            // Sort by date descending
+            var sorted = prospect.meetings.slice().sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+            sorted.forEach(function(m) {
+                var div = document.createElement('div');
+                div.className = 'meeting-item';
+                var dateStr = m.date;
+                try {
+                    dateStr = new Date(m.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                } catch (e) {}
+                div.innerHTML = '<span class="meeting-date">' + dateStr + '</span><span class="meeting-notes">' + (m.notes || 'No notes') + '</span>';
+                meetingsContainer.appendChild(div);
+            });
+        }
+
+        // Section 7: Open Follow-Ups
+        var followupsContainer = document.getElementById('fFollowups');
+        var followUps = extractFollowUps(prospect);
+        if (followUps.length === 0) {
+            followupsContainer.innerHTML = '<p class="no-data">No open follow-ups identified.</p>';
+        } else {
+            followupsContainer.innerHTML = '';
+            followUps.forEach(function(f) {
+                var div = document.createElement('div');
+                div.className = 'followup-item';
+                div.innerHTML = '<div class="followup-check"></div><span class="followup-text">' + f + '</span>';
+                followupsContainer.appendChild(div);
+            });
+        }
+    }
+
+    // Event listeners
+    document.getElementById('prospectSelect').addEventListener('change', function() {
+        var id = this.value;
+        if (!id) {
+            document.getElementById('emptyState').style.display = '';
+            document.getElementById('briefing').classList.remove('visible');
+            document.getElementById('printBtn').disabled = true;
+            return;
+        }
+        var prospects = loadProspects();
+        var prospect = prospects.find(function(p) { return p.id === id; });
+        if (prospect) {
+            renderBriefing(prospect);
+        }
+    });
+
+    document.getElementById('printBtn').addEventListener('click', function() {
+        window.print();
+    });
+
+    document.getElementById('loadDemoBtn').addEventListener('click', loadDemoData);
+    document.getElementById('loadDemoBtnAlt').addEventListener('click', loadDemoData);
+
+    // Initialize
+    populateDropdown();
+</script>
+
+</body>
+</html>

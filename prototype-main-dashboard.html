@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avera — M&A Superagent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8f9fc;
+            --surface: #ffffff;
+            --surface-2: #f1f3f8;
+            --border: #e5e7ef;
+            --border-hover: #c8ccd8;
+            --text: #1a1d2e;
+            --text-dim: #6b7194;
+            --accent: #6c5ce7;
+            --accent-light: #ebe8ff;
+            --accent-soft: rgba(108,92,231,0.08);
+            --green: #10b981;
+            --green-soft: rgba(16,185,129,0.08);
+            --amber: #f59e0b;
+            --amber-soft: rgba(245,158,11,0.08);
+            --red: #ef4444;
+            --red-soft: rgba(239,68,68,0.08);
+            --pink: #ec4899;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        button { cursor: pointer; font-family: inherit; }
+
+        /* ========== HOMEPAGE ========== */
+        .home {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: linear-gradient(160deg, #f8f9fc 0%, #ede8ff 40%, #f0f7ff 70%, #f8f9fc 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .home::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(108,92,231,0.08) 0%, transparent 70%);
+            top: -200px; right: -100px;
+            border-radius: 50%;
+        }
+        .home::after {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(236,72,153,0.06) 0%, transparent 70%);
+            bottom: -200px; left: -100px;
+            border-radius: 50%;
+        }
+        .home-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            max-width: 640px;
+            animation: fadeUp 0.8s ease-out both;
+        }
+        .home-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        .home-logo-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white; font-weight: 800;
+            box-shadow: 0 8px 24px rgba(108,92,231,0.25);
+        }
+        .home-logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--text);
+        }
+        .home h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        .home h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .home-sub {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            width: 100%;
+            margin-bottom: 48px;
+        }
+        .home-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        .home-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        .home-card-icon {
+            font-size: 2rem;
+            margin-bottom: 14px;
+            display: block;
+        }
+        .home-card-title {
+            font-weight: 700;
+            font-size: 0.92rem;
+            margin-bottom: 6px;
+        }
+        .home-card-desc {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+        .home-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(108,92,231,0.3);
+            transition: all 0.25s;
+        }
+        .home-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(108,92,231,0.4);
+            background: #5b4bd6;
+        }
+        .home-skip {
+            margin-top: 16px;
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .home-skip:hover { color: var(--accent); }
+
+        /* ========== APP LAYOUT ========== */
+        .app { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 260px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 24px 14px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 10;
+        }
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            min-height: 100vh;
+        }
+        .topbar {
+            height: 64px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .content { padding: 32px; max-width: 1200px; }
+
+        /* Logo */
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px;
+        }
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; color: white; font-weight: 800;
+        }
+
+        /* Nav */
+        .nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .nav-item {
+            display: flex; align-items: center; gap: 11px;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-dim);
+            font-size: 0.86rem;
+            font-weight: 500;
+            border: none; background: none;
+            width: 100%; text-align: left;
+            transition: all 0.15s;
+        }
+        .nav-item:hover { background: var(--surface-2); color: var(--text); }
+        .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+        .nav-item .icon { font-size: 1.05rem; width: 22px; text-align: center; }
+        .nav-section {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            padding: 20px 14px 8px;
+            font-weight: 600;
+        }
+        .nav-badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow); }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .card-title { font-size: 0.95rem; font-weight: 700; }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+        /* Stats */
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+        .stat-label { font-size: 0.76rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 1.75rem; font-weight: 800; letter-spacing: -1px; }
+        .stat-change { font-size: 0.75rem; margin-top: 8px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .stat-up { color: var(--green); }
+        .stat-down { color: var(--red); }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(108,92,231,0.2); }
+        .btn-primary:hover { background: #5b4bd6; box-shadow: 0 4px 12px rgba(108,92,231,0.3); }
+        .btn-ghost { background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-sm { padding: 6px 14px; font-size: 0.75rem; }
+
+        /* Tags */
+        .tag {
+            display: inline-flex; align-items: center;
+            padding: 4px 10px; border-radius: 50px;
+            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2px;
+        }
+        .tag-green { background: var(--green-soft); color: var(--green); }
+        .tag-amber { background: var(--amber-soft); color: var(--amber); }
+        .tag-red { background: var(--red-soft); color: var(--red); }
+        .tag-purple { background: var(--accent-soft); color: var(--accent); }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left; padding: 12px 16px;
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+        td {
+            padding: 16px; border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+        tr:hover td { background: var(--accent-soft); }
+        .company-name { font-weight: 700; }
+        .company-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
+
+        /* Progress */
+        .progress-bar {
+            height: 6px; background: var(--surface-2);
+            border-radius: 3px; overflow: hidden;
+        }
+        .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+
+        /* Activity feed */
+        .feed-item {
+            display: flex; gap: 12px; padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .feed-item:last-child { border-bottom: none; }
+        .feed-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        .feed-text { font-size: 0.84rem; line-height: 1.5; }
+        .feed-time { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; }
+
+        /* Template grid */
+        .template-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: var(--shadow-sm);
+        }
+        .template-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        .template-icon { font-size: 1.5rem; margin-bottom: 12px; }
+        .template-name { font-weight: 700; font-size: 0.88rem; margin-bottom: 6px; }
+        .template-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; }
+
+        /* Outreach */
+        .outreach-stat { text-align: center; padding: 16px; }
+        .outreach-num { font-size: 2rem; font-weight: 800; }
+        .outreach-label { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+
+        /* Search */
+        .search-box {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 10px 18px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.84rem;
+            width: 300px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .search-box::placeholder { color: var(--text-dim); }
+
+        /* User avatar */
+        .avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem; font-weight: 700; color: white;
+        }
+
+        /* Page title */
+        .page-title { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        .page-sub { font-size: 0.86rem; color: var(--text-dim); margin-top: 4px; }
+
+        /* Risk item */
+        .risk-item {
+            display: flex; gap: 14px; padding: 16px;
+            background: var(--surface-2); border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .risk-item:hover { border-color: var(--border); }
+        .risk-icon { font-size: 1.2rem; margin-top: 2px; }
+        .risk-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 4px; }
+        .risk-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.6; }
+        .risk-action { font-size: 0.75rem; color: var(--accent); margin-top: 8px; font-weight: 600; cursor: pointer; }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .section { margin-bottom: 28px; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface-2); padding: 4px; border-radius: 50px; width: fit-content; }
+        .tab {
+            padding: 8px 20px; border-radius: 50px;
+            font-size: 0.82rem; font-weight: 600;
+            background: transparent; color: var(--text-dim);
+            border: none; transition: all 0.2s;
+        }
+        .tab:hover { color: var(--text); }
+        .tab.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
+
+        /* File upload area */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--surface);
+        }
+        .upload-zone:hover { border-color: var(--accent); background: var(--accent-soft); }
+        .upload-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .upload-text { font-size: 0.88rem; color: var(--text-dim); }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeUp 0.5s ease-out both; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .content { padding: 20px; }
+            .home-grid { grid-template-columns: 1fr; }
+        }
+        /* Filter bar */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .filter-select {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 0.82rem;
+            color: var(--text);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7194' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+        .filter-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .filter-checkbox input { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+        .result-count { font-size: 0.75rem; color: var(--text-dim); margin-left: auto; font-weight: 500; }
+
+        /* Horizontal bar chart */
+        .bar-chart { display: flex; flex-direction: column; gap: 14px; }
+        .bar-row { display: flex; align-items: center; gap: 12px; }
+        .bar-label { font-size: 0.78rem; color: var(--text-dim); min-width: 70px; font-weight: 500; }
+        .bar-track { flex: 1; height: 28px; background: var(--surface-2); border-radius: 6px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 0.72rem; font-weight: 600; color: white; transition: width 0.6s ease; }
+    </style>
+    <script>
+const PROSPECTS = [
+  {"id":1,"company":"Function Health","website":"functionhealth.com","hq":"Austin, TX","nycBased":false,"sector":"Consumer Health","subsector":"Lab testing & longevity","stage":"Series B","fundingAmount":"$298M","fundingDate":"Nov 2025","leadInvestors":"Redpoint, a16z, Battery Ventures","leadContact":"Jonathan Swerdlin","contactTitle":"CEO","whyMAFits":"Rapidly scaling consumer health platform could acquire specialized diagnostic or wellness companies","outreachHook":"$298M raise signals aggressive growth — acquisitions could accelerate product roadmap","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":2,"company":"Eight Sleep","website":"eightsleep.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Sleep technology","stage":"Series D","fundingAmount":"$100M","fundingDate":"Aug 2025","leadInvestors":"Khosla Ventures, Founders Fund","leadContact":"Matteo Franceschetti","contactTitle":"CEO & Co-Founder","whyMAFits":"Expanding into medical applications — could acquire sleep diagnostics or wearable sensor companies","outreachHook":"Recent pivot into medical sleep applications creates natural M&A opportunities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":3,"company":"Nourish","website":"usenourish.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Nutrition telehealth","stage":"Series B","fundingAmount":"$70M","fundingDate":"Apr 2025","leadInvestors":"JP Morgan Growth Equity, Index Ventures, Thrive Capital","leadContact":"Sam Lomeli","contactTitle":"CEO & Co-Founder","whyMAFits":"$1B+ valuation — could acquire complementary chronic disease management or dietitian platforms","outreachHook":"Crossed $1B valuation — acquisitions in adjacent health coaching verticals could accelerate category leadership","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":4,"company":"Fay Nutrition","website":"faynutrition.com","hq":"United States","nycBased":false,"sector":"Consumer Health","subsector":"Nutrition care","stage":"Series B","fundingAmount":"$60M","fundingDate":"Feb 2025","leadInvestors":"Goldman Growth Equity","leadContact":"Management team","contactTitle":"","whyMAFits":"Competing with Nourish — acquiring regional dietitian networks could drive differentiation","outreachHook":"Goldman backing signals scale ambitions — M&A is a natural lever","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":5,"company":"Inito","website":"inito.com","hq":"Bangalore, India (US ops)","nycBased":false,"sector":"Consumer Health","subsector":"Fertility / at-home diagnostics","stage":"Series B","fundingAmount":"$29M","fundingDate":"Dec 2025","leadInvestors":"Bertelsmann India, Fireside Ventures","leadContact":"Aayush Rai","contactTitle":"CEO","whyMAFits":"Expanding from fertility into broader at-home testing — could acquire diagnostic technology companies","outreachHook":"AI-designed antibodies strategy creates acquisition opportunities in diagnostic biotech","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":6,"company":"Diana Health","website":"dianahealth.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Women's healthcare","stage":"Series C","fundingAmount":"$55M","fundingDate":"Sep 2025","leadInvestors":"Norwest Venture Partners, HealthQuest Capital","leadContact":"Kate Condliffe","contactTitle":"CEO & Co-Founder","whyMAFits":"Multi-service women's health platform — natural acquirer of specialized clinics or digital health tools","outreachHook":"Expanding across multiple women's health verticals — acquisitions could fast-track expansion","status":"Followed Up","lastAction":"Follow-up sent 2026-03-18","nextStep":"If no reply by 2026-04-01 — try alternate channel or warm intro","notes":"Initial outreach 2026-03-10 + follow-up 2026-03-18 — no response yet"},
+  {"id":7,"company":"Pomelo Care","website":"pomelocare.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Maternal & pediatric care","stage":"Series C","fundingAmount":"$92M","fundingDate":"Jan 2026","leadInvestors":"Andreessen Horowitz, Stripes","leadContact":"Marta Bralic Kerns","contactTitle":"CEO & Founder","whyMAFits":"Tech-enabled maternity and pediatric care — could acquire remote monitoring or postpartum platforms","outreachHook":"$92M raise with a16z backing signals scale-up phase","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":8,"company":"Grow Therapy","website":"growtherapy.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Mental health / therapist marketplace","stage":"Series D","fundingAmount":"$150M","fundingDate":"Mar 2026","leadInvestors":"TCV, Goldman Sachs, Sequoia, SignalFire","leadContact":"Jake Cooper","contactTitle":"CEO & Co-Founder","whyMAFits":"$3B valuation, 7M+ visits — could acquire behavioral health practices or therapy tech tools","outreachHook":"Just raised $150M at $3B valuation — actively building enterprise mental health offering","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":9,"company":"Talkiatry","website":"talkiatry.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Digital psychiatry","stage":"Series D","fundingAmount":"$210M","fundingDate":"Feb 2026","leadInvestors":"Perceptive Advisors, a16z, Sofina","leadContact":"Robert Krayn","contactTitle":"CEO & Co-Founder","whyMAFits":"Fastest-growing mental health platform — acquisitions of regional practices could accelerate national coverage","outreachHook":"$210M raise nearly matched all prior funding combined — clearly in aggressive scale mode","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":10,"company":"Pathos","website":"pathos.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Precision mental health medicines (AI)","stage":"Series D","fundingAmount":"$365M","fundingDate":"May 2025","leadInvestors":"a16z, NEA, Revolution","leadContact":"Management team","contactTitle":"","whyMAFits":"AI-driven drug development — could acquire clinical-stage biotech or diagnostic platforms","outreachHook":"Largest single mental health startup investment ever ($365M)","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":11,"company":"Duos","website":"duostech.com","hq":"United States","nycBased":false,"sector":"Consumer Health","subsector":"AI digital health platform","stage":"Growth Equity","fundingAmount":"$130M","fundingDate":"Oct 2025","leadInvestors":"FTV Capital","leadContact":"Management team","contactTitle":"","whyMAFits":"AI-powered member activation — could acquire wellness engagement or benefits navigation tools","outreachHook":"$130M growth equity positions them for platform expansion","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":12,"company":"Radial","website":"","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Mental health treatment (neuromodulation)","stage":"Series A","fundingAmount":"$50M","fundingDate":"Dec 2025","leadInvestors":"General Catalyst, BoxGroup, Founder Collective","leadContact":"John Capecelatro","contactTitle":"Co-Founder","whyMAFits":"Novel mental health treatment modalities — could acquire complementary therapy practices","outreachHook":"$50M Series A from GC — moving fast and may need to acquire clinical capacity","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":13,"company":"Rula Health","website":"rula.com","hq":"Los Angeles, CA","nycBased":false,"sector":"Consumer Health","subsector":"Mental health provider network","stage":"Series C","fundingAmount":"$143M","fundingDate":"Jul 2024","leadInvestors":"Hedosophia, Sequoia","leadContact":"Josh Bruno","contactTitle":"CEO & Co-Founder","whyMAFits":"$471M annualized revenue, expanded to 50 states — could acquire regional provider groups","outreachHook":"Massive revenue growth (100% YoY) and national expansion create natural acquisition opportunities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":14,"company":"SonderMind","website":"sondermind.com","hq":"Denver, CO","nycBased":false,"sector":"Consumer Health","subsector":"Mental health services","stage":"Series C","fundingAmount":"$276M total","fundingDate":"2022-2025","leadInvestors":"Drive Capital, General Catalyst","leadContact":"Mark Frank","contactTitle":"CEO","whyMAFits":"$1B valuation — could acquire therapy tech or specialty mental health practices","outreachHook":"AI product launch in Oct 2025 signals tech-forward growth strategy","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":15,"company":"Headway","website":"headway.co","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"Mental health insurance platform","stage":"Series C","fundingAmount":"$100M","fundingDate":"2024","leadInvestors":"a16z ($2.3B valuation)","leadContact":"Andrew Adams","contactTitle":"CEO & Co-Founder","whyMAFits":"Connecting therapists with insurance — could acquire credentialing tech or practice management tools","outreachHook":"$2.3B valuation and insurance-focused model positions them for strategic acquisitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":16,"company":"Conceivable Life Sciences","website":"conceivablelifesciences.com","hq":"New York, NY","nycBased":true,"sector":"Consumer Health","subsector":"AI-automated IVF","stage":"Series A","fundingAmount":"$50M","fundingDate":"Sep 2025","leadInvestors":"ACME Capital, Artis Ventures","leadContact":"Joshua Abram","contactTitle":"Co-Founder","whyMAFits":"Automated IVF labs — acquisitions of fertility clinic technology could accelerate scale","outreachHook":"$88M total funding for AI IVF automation","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":17,"company":"Curative","website":"curative.com","hq":"San Francisco, CA","nycBased":false,"sector":"Consumer Health","subsector":"Health insurance","stage":"Series B","fundingAmount":"$153M","fundingDate":"2025","leadInvestors":"DCVC","leadContact":"Fred Turner","contactTitle":"CEO & Founder","whyMAFits":"Health insurance startup with $1B+ valuation — could acquire care delivery or benefits tech companies","outreachHook":"Fresh unicorn status creates natural buyer profile","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":18,"company":"Angle Health","website":"anglehealth.com","hq":"San Francisco, CA","nycBased":false,"sector":"Consumer Health","subsector":"AI healthcare benefits","stage":"Series B","fundingAmount":"$134M","fundingDate":"Dec 2025","leadInvestors":"Portage Ventures","leadContact":"Ty Amin","contactTitle":"CEO & Co-Founder","whyMAFits":"AI-driven health insurance — could acquire benefits administration or health analytics companies","outreachHook":"$134M Series B scaling fast in market ripe for consolidation","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":19,"company":"Honest Health","website":"honesthealth.com","hq":"Nashville, TN","nycBased":false,"sector":"Consumer Health","subsector":"Tech-enabled primary care","stage":"Growth","fundingAmount":"$140M","fundingDate":"2025","leadInvestors":"NewSpring","leadContact":"Management team","contactTitle":"","whyMAFits":"Value-based primary care — could acquire physician practices or care management technology","outreachHook":"$140M for tech-enabled primary care — acquisitions of practices could accelerate network","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":20,"company":"Hippocratic AI","website":"hippocratic.ai","hq":"Palo Alto, CA","nycBased":false,"sector":"Healthtech","subsector":"Healthcare AI agents","stage":"Series C","fundingAmount":"$126M","fundingDate":"Nov 2025","leadInvestors":"Avenir Growth ($3.5B valuation)","leadContact":"Munjal Shah","contactTitle":"CEO & Co-Founder","whyMAFits":"Building AI agents for healthcare — could acquire specialized clinical AI or NLP companies","outreachHook":"$3.5B valuation on AI healthcare agents","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":21,"company":"Tennr","website":"tennr.com","hq":"New York, NY","nycBased":true,"sector":"Healthtech","subsector":"AI patient referrals","stage":"Series C","fundingAmount":"$101M","fundingDate":"Jun 2025","leadInvestors":"IVP, a16z, GV, Lightspeed","leadContact":"Tyler Johnson","contactTitle":"CEO","whyMAFits":"Fastest-growing health tech fixing patient referrals — acquisitions of workflow automation tools","outreachHook":"$605M valuation — acquisitions can extend beyond referrals into broader care coordination","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":22,"company":"Inspiren","website":"inspiren.com","hq":"New York, NY","nycBased":true,"sector":"Healthtech","subsector":"AI for senior living","stage":"Series B","fundingAmount":"$100M","fundingDate":"Sep 2025","leadInvestors":"Insight Partners, Scale Venture Partners","leadContact":"Michael Wang","contactTitle":"Co-Founder","whyMAFits":"AI-powered monitoring for senior living — could acquire connected device or EHR integration companies","outreachHook":"$100M Series B signals major scale-up across 30K+ US senior living communities","status":"Followed Up","lastAction":"Follow-up sent 2026-03-18","nextStep":"If no reply by 2026-04-01 — try alternate channel or warm intro","notes":"Initial outreach 2026-03-10 + follow-up 2026-03-18 — no response yet"},
+  {"id":23,"company":"Paradigm","website":"paradigm.com","hq":"New York, NY","nycBased":true,"sector":"Healthtech","subsector":"Clinical trial platform","stage":"Series B","fundingAmount":"$78M","fundingDate":"Dec 2025","leadInvestors":"ARCH Venture, General Catalyst, GV, Lux Capital","leadContact":"Jonathan Hirsch","contactTitle":"Co-Founder","whyMAFits":"Patient recruitment and clinical trial efficiency — could acquire site networks or data analytics","outreachHook":"$281M total raised — positioned to be a clinical trial platform consolidator","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":24,"company":"Nabla","website":"nabla.com","hq":"New York, NY","nycBased":true,"sector":"Healthtech","subsector":"AI for clinicians","stage":"Series C","fundingAmount":"$70M","fundingDate":"2025","leadInvestors":"HV Capital","leadContact":"Alexandre Lebrun","contactTitle":"CEO & Co-Founder","whyMAFits":"AI assistant used by 85,000+ clinicians — could acquire EHR integration or documentation tools","outreachHook":"Broad clinician adoption creates platform for acquiring complementary clinical AI tools","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":25,"company":"Candid Health","website":"candidhealth.com","hq":"San Francisco, CA","nycBased":false,"sector":"Healthtech","subsector":"Revenue cycle management","stage":"Series C","fundingAmount":"$52.5M","fundingDate":"2025","leadInvestors":"Oak HC/FT","leadContact":"Management team","contactTitle":"","whyMAFits":"AI-powered RCM — could acquire billing or denial management companies","outreachHook":"RCM is a massive fragmented market — M&A is the playbook for category leadership","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":26,"company":"Cohere Health","website":"coherehealth.com","hq":"Boston, MA","nycBased":false,"sector":"Healthtech","subsector":"Prior authorization & compliance AI","stage":"Series C","fundingAmount":"$90M","fundingDate":"2025","leadInvestors":"Temasek","leadContact":"Siva Namasivayam","contactTitle":"CEO & Co-Founder","whyMAFits":"AI for healthcare authorization — could acquire utilization management or payer integration tools","outreachHook":"$90M with Temasek backing — positioned to consolidate administrative health workflows","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":27,"company":"Thyme Care","website":"thymecare.com","hq":"Nashville, TN","nycBased":false,"sector":"Healthtech","subsector":"Value-based oncology care","stage":"Series D","fundingAmount":"$97M","fundingDate":"2025","leadInvestors":"","leadContact":"Robin Shah","contactTitle":"CEO & Co-Founder","whyMAFits":"Oncology-focused value-based care — could acquire specialty practices or clinical data platforms","outreachHook":"Oncology VBC is fragmented — M&A can accelerate payer contract scale","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":28,"company":"Tebra","website":"tebra.com","hq":"United States","nycBased":false,"sector":"Healthtech","subsector":"Practice management / EHR","stage":"Growth","fundingAmount":"$250M (equity + debt)","fundingDate":"2025","leadInvestors":"Hildred Capital Management","leadContact":"Management team","contactTitle":"","whyMAFits":"Patient record software — classic roll-up candidate for smaller practice management tools","outreachHook":"$250M for AI and automation — likely to pursue acquisitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":29,"company":"MD Integrations","website":"mdintegrations.com","hq":"New York, NY","nycBased":true,"sector":"Healthtech","subsector":"Telehealth platform","stage":"Growth","fundingAmount":"$77M","fundingDate":"2025","leadInvestors":"Updata Partners, Denali Growth Partners","leadContact":"Management team","contactTitle":"","whyMAFits":"Telehealth infrastructure for digital health brands — could acquire specialty telehealth platforms","outreachHook":"Growth capital for telehealth infrastructure — acquisitions could expand addressable market","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":30,"company":"Abridge","website":"abridge.com","hq":"Pittsburgh, PA","nycBased":false,"sector":"Healthtech","subsector":"Clinical AI documentation","stage":"Series E","fundingAmount":"$300M","fundingDate":"Jun 2025","leadInvestors":"$5.3B valuation; $550M raised in 2025","leadContact":"Shiv Rao","contactTitle":"CEO & Co-Founder","whyMAFits":"Leading clinical AI documentation — could acquire specialty documentation or EHR integration companies","outreachHook":"Two mega-rounds in 2025 ($250M + $300M) — clearly building a platform, acquisitions likely","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":31,"company":"Darrow","website":"darrow.ai","hq":"New York, NY / Tel Aviv","nycBased":true,"sector":"Healthtech-adjacent","subsector":"AI legal intelligence","stage":"Series B","fundingAmount":"$60M","fundingDate":"Apr 2025","leadInvestors":"Sapphire Ventures","leadContact":"Evyatar Ben Artzi","contactTitle":"CEO & Co-Founder","whyMAFits":"AI legal intelligence platform — could acquire legal data or case analysis companies","outreachHook":"$60M Series B — AI legal tech has clear M&A opportunities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":32,"company":"Judi Health","website":"judihealth.com","hq":"New York, NY","nycBased":true,"sector":"Healthtech","subsector":"Pharmacy benefit management","stage":"Series F","fundingAmount":"$252M","fundingDate":"Sep 2025","leadInvestors":"Wellington Management, General Catalyst","leadContact":"AJ Loiacono","contactTitle":"CEO & Co-Founder","whyMAFits":"PBM platform disrupting $400B+ market — could acquire specialty pharmacy or drug pricing companies","outreachHook":"$400M total investment — PBM disruption naturally leads to strategic acquisitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":33,"company":"Valence","website":"valence.co","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"AI coaching & employee development","stage":"Series B","fundingAmount":"$50M","fundingDate":"Sep 2025","leadInvestors":"Bessemer Venture Partners","leadContact":"Parker Mitchell","contactTitle":"CEO & Co-Founder","whyMAFits":"AI coaching platform — could acquire leadership assessment or learning content companies","outreachHook":"$50M Series B — acquisitions of L&D or people analytics tools could expand platform","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":34,"company":"Modal Labs","website":"modal.com","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Cloud ML infrastructure","stage":"Series B","fundingAmount":"$87M","fundingDate":"Sep 2025","leadInvestors":"Redpoint, Lux Capital","leadContact":"Erik Bernhardsson","contactTitle":"CEO & Co-Founder","whyMAFits":"Cloud code execution for ML — could acquire developer tools or model serving companies","outreachHook":"$87M Series B — acquisitions could add specialized compute capabilities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":35,"company":"Tabs","website":"tabs.inc","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"AI revenue automation (B2B finance)","stage":"Series B","fundingAmount":"$55M","fundingDate":"Sep 2025","leadInvestors":"General Catalyst, Lightspeed","leadContact":"Ali Hussain","contactTitle":"CEO & Co-Founder","whyMAFits":"Revenue automation for B2B finance — could acquire billing or payment reconciliation tools","outreachHook":"$92M total raised — acquisitions in adjacent finops tools could build comprehensive platform","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":36,"company":"PermitFlow","website":"permitflow.com","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Construction permitting software","stage":"Series B","fundingAmount":"$54M","fundingDate":"Dec 2025","leadInvestors":"Kleiner Perkins, Accel, Felicis","leadContact":"Francis Thumpasery","contactTitle":"CEO & Co-Founder","whyMAFits":"Construction permitting platform — could acquire municipal data or construction management tools","outreachHook":"Backed by Kleiner + Accel + YC — permitting is a wedge into broader construction tech","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":37,"company":"Adaptive Security","website":"adaptivesecurity.com","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Cybersecurity training & phishing defense","stage":"Series B","fundingAmount":"$81M","fundingDate":"Dec 2025","leadInvestors":"a16z, Bain Capital, OpenAI Startup Fund","leadContact":"Brian Long","contactTitle":"CEO & Co-Founder","whyMAFits":"AI-powered security training — could acquire threat simulation or compliance training companies","outreachHook":"OpenAI Startup Fund investment signals AI-first approach","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":38,"company":"Zafran Security","website":"zafran.io","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Vulnerability management & cybersecurity","stage":"Series C","fundingAmount":"$60M","fundingDate":"Dec 2025","leadInvestors":"Sequoia, Menlo Ventures","leadContact":"Ben Seri","contactTitle":"CEO & Co-Founder","whyMAFits":"Automated vulnerability mitigation — could acquire security scanning or remediation tools","outreachHook":"Sequoia + Menlo backed — $130M total positions them for platform expansion","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":39,"company":"Outtake","website":"outtake.ai","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Digital trust & cybersecurity","stage":"Series B","fundingAmount":"$40M","fundingDate":"Jan 2026","leadInvestors":"CRV, ICONIQ, S32","leadContact":"Alex Dhillon","contactTitle":"CEO & Founder","whyMAFits":"Threat classification and detection — could acquire security monitoring or response tools","outreachHook":"Backed by Satya Nadella, William Ackman — high-profile investors signal big ambitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":40,"company":"Sixfold AI","website":"sixfold.ai","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Insurtech / AI underwriting","stage":"Series B","fundingAmount":"$30M","fundingDate":"Jan 2026","leadInvestors":"Bessemer, Salesforce Ventures, Guidewire","leadContact":"Alex Schmelkin","contactTitle":"CEO & Co-Founder","whyMAFits":"AI-automated underwriting — could acquire insurance data or risk modeling companies","outreachHook":"Strategic investors (Guidewire, Salesforce) signal platform ambitions","status":"Followed Up","lastAction":"Follow-up sent 2026-03-18","nextStep":"If no reply by 2026-04-01 — try alternate channel or warm intro","notes":"Initial outreach 2026-03-10 + follow-up 2026-03-18 — no response yet"},
+  {"id":41,"company":"Benepass","website":"benepass.com","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Benefits administration","stage":"Series B","fundingAmount":"$40M","fundingDate":"Jan 2026","leadInvestors":"Centana Growth, Portage Ventures","leadContact":"Jaclyn Chen","contactTitle":"CEO & Co-Founder","whyMAFits":"Employee benefits platform — could acquire HSA/FSA administrators or wellness programs","outreachHook":"$74M total raised — benefits space ripe for consolidation","status":"Followed Up","lastAction":"Follow-up sent 2026-03-18","nextStep":"If no reply by 2026-04-01 — try alternate channel or warm intro","notes":"Initial outreach 2026-03-10 + follow-up 2026-03-18 — no response yet"},
+  {"id":42,"company":"Profound","website":"profound.co","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"AI marketing / search visibility","stage":"Series C","fundingAmount":"$96M","fundingDate":"Feb 2026","leadInvestors":"Lightspeed Venture Partners","leadContact":"Management team","contactTitle":"","whyMAFits":"AI search optimization — could acquire SEO tools or digital marketing companies","outreachHook":"$96M Series C — acquisitions can add data sources and channel capabilities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":43,"company":"GreenLite","website":"greenlite.com","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"Construction permitting technology","stage":"Series B","fundingAmount":"$49.5M","fundingDate":"Sep 2025","leadInvestors":"Insight Partners, Craft Ventures","leadContact":"Benjamin Allen","contactTitle":"CEO & Co-Founder","whyMAFits":"Permitting and compliance platform — could acquire municipal data or construction management tools","outreachHook":"Insight Partners + Craft Ventures backing — proptech/construction tech ripe for roll-up","status":"Followed Up","lastAction":"Follow-up sent 2026-03-18","nextStep":"If no reply by 2026-04-01 — try alternate channel or warm intro","notes":"Initial outreach 2026-03-10 + follow-up 2026-03-18 — no response yet"},
+  {"id":44,"company":"WorkFusion","website":"workfusion.com","hq":"New York, NY","nycBased":true,"sector":"SaaS","subsector":"AI compliance automation (financial services)","stage":"Venture","fundingAmount":"$45M","fundingDate":"Sep 2025","leadInvestors":"Georgian, Declaration Partners","leadContact":"Andrew Volkov","contactTitle":"CEO & Co-Founder","whyMAFits":"AI agents for financial crime compliance — could acquire RegTech or KYC/AML companies","outreachHook":"$386M total raised — financial compliance has clear acquisition targets","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":45,"company":"Vertice","website":"vertice.one","hq":"London, UK","nycBased":false,"sector":"SaaS","subsector":"SaaS spend management","stage":"Series C","fundingAmount":"$50M","fundingDate":"2025","leadInvestors":"Lakestar, Bessemer","leadContact":"Eldar Tuvey","contactTitle":"CEO & Co-Founder","whyMAFits":"AI-powered SaaS spend platform — could acquire procurement or vendor management tools","outreachHook":"13x business growth in 3 years — acquisitions could expand into broader procurement","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":46,"company":"Gamma","website":"gamma.app","hq":"San Francisco, CA","nycBased":false,"sector":"SaaS","subsector":"AI presentations & content","stage":"Series B","fundingAmount":"$68M","fundingDate":"2025","leadInvestors":"a16z ($2.1B valuation)","leadContact":"Grant Lee","contactTitle":"CEO & Co-Founder","whyMAFits":"AI-generated presentations — could acquire design tools or collaboration platforms","outreachHook":"Unicorn status via Series B — rapid growth creates M&A opportunities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":47,"company":"Awardco","website":"awardco.com","hq":"Lindon, UT","nycBased":false,"sector":"SaaS","subsector":"Employee engagement & recognition","stage":"Series B","fundingAmount":"$165M","fundingDate":"2025","leadInvestors":"General Catalyst ($1B valuation)","leadContact":"Steve Drazowski","contactTitle":"CEO","whyMAFits":"Employee recognition unicorn — could acquire rewards or culture analytics companies","outreachHook":"$1B valuation — HR tech consolidation through acquisitions is a proven playbook","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":48,"company":"Serval","website":"serval.com","hq":"United States","nycBased":false,"sector":"SaaS","subsector":"IT automation / help desk AI","stage":"Series B","fundingAmount":"$75M","fundingDate":"Dec 2025","leadInvestors":"Sequoia ($1B valuation)","leadContact":"Management team","contactTitle":"","whyMAFits":"AI IT automation unicorn — could acquire ITSM or workflow automation companies","outreachHook":"Fresh unicorn at $1B — IT service management is a consolidation-heavy market","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":49,"company":"Statsig","website":"statsig.com","hq":"Seattle, WA","nycBased":false,"sector":"SaaS","subsector":"Experimentation & feature management","stage":"Series C","fundingAmount":"$350M","fundingDate":"2025","leadInvestors":"Benchmark ($6B valuation)","leadContact":"Vijaye Raji","contactTitle":"CEO & Founder (ex-Facebook VP)","whyMAFits":"A/B testing and feature flagging — could acquire analytics or developer tooling companies","outreachHook":"$6B valuation — platform company that could expand via acquisitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":50,"company":"ClickHouse","website":"clickhouse.com","hq":"San Francisco, CA","nycBased":false,"sector":"SaaS","subsector":"Real-time analytics database","stage":"Series C","fundingAmount":"$350M","fundingDate":"2025","leadInvestors":"","leadContact":"Aaron Katz","contactTitle":"CEO","whyMAFits":"Open-source analytics database — could acquire visualization or data integration companies","outreachHook":"$350M for real-time analytics — acquisitions can build out the data stack","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":51,"company":"Hex","website":"hex.tech","hq":"San Francisco, CA","nycBased":false,"sector":"SaaS","subsector":"Collaborative data workspace","stage":"Series C","fundingAmount":"$70M","fundingDate":"2025","leadInvestors":"a16z, Sequoia","leadContact":"Barry McCardel","contactTitle":"CEO & Co-Founder","whyMAFits":"Collaborative analytics platform — could acquire notebook tools or data connectors","outreachHook":"a16z + Sequoia — positioned to be the 'Figma of data'","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":52,"company":"Deepgram","website":"deepgram.com","hq":"San Francisco, CA","nycBased":false,"sector":"SaaS","subsector":"Enterprise voice AI","stage":"Series C","fundingAmount":"$130M","fundingDate":"Jan 2026","leadInvestors":"","leadContact":"Scott Stephenson","contactTitle":"CEO & Co-Founder","whyMAFits":"Voice AI platform — could acquire speech analytics or call center AI companies","outreachHook":"$130M for enterprise voice AI — acquisitions of vertical voice applications","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":53,"company":"Coderabbit","website":"coderabbit.ai","hq":"United States","nycBased":false,"sector":"SaaS","subsector":"AI code review","stage":"Series C","fundingAmount":"$127M","fundingDate":"2025","leadInvestors":"Founders Fund ($1B valuation)","leadContact":"Management team","contactTitle":"","whyMAFits":"AI code review unicorn — could acquire code quality or security scanning tools","outreachHook":"Unicorn via Founders Fund — dev tools space sees frequent M&A","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":54,"company":"Replicate","website":"replicate.com","hq":"San Francisco, CA","nycBased":false,"sector":"SaaS","subsector":"AI model hosting & inference","stage":"Series B","fundingAmount":"$40M","fundingDate":"2025","leadInvestors":"a16z","leadContact":"Ben Firshman","contactTitle":"CEO & Co-Founder","whyMAFits":"API for running AI models — could acquire model optimization or GPU infrastructure companies","outreachHook":"a16z-backed AI infrastructure — acquisitions could add vertical AI capabilities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":55,"company":"Decart","website":"decart.ai","hq":"San Francisco, CA","nycBased":false,"sector":"SaaS","subsector":"Interactive AI experiences","stage":"Series B","fundingAmount":"$100M","fundingDate":"2025","leadInvestors":"Sequoia, Benchmark ($3.1B valuation)","leadContact":"Management team","contactTitle":"","whyMAFits":"AI for interactive experiences — could acquire gaming tech or simulation companies","outreachHook":"$3.1B valuation — acquisitions in gaming/interactive AI could expand use cases","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":56,"company":"Revel","website":"revel.co","hq":"United States","nycBased":false,"sector":"SaaS","subsector":"Hardware test & control platform","stage":"Series B","fundingAmount":"$150M","fundingDate":"2025","leadInvestors":"Index Ventures","leadContact":"Management team","contactTitle":"","whyMAFits":"Software for hardware testing — could acquire test equipment or manufacturing QA companies","outreachHook":"$150M for hardware-focused SaaS — niche market with M&A opportunities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":57,"company":"Filevine","website":"filevine.com","hq":"Salt Lake City, UT","nycBased":false,"sector":"SaaS","subsector":"Legal case management","stage":"Series E","fundingAmount":"$260M","fundingDate":"2025","leadInvestors":"Accel, Insight Partners ($3B valuation)","leadContact":"Ryan Anderson","contactTitle":"CEO & Co-Founder","whyMAFits":"$3B legaltech platform — natural acquirer of legal workflow or document management companies","outreachHook":"Massive raise signals acquisition appetite — legaltech is fragmented","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":58,"company":"osapiens","website":"osapiens.com","hq":"Germany","nycBased":false,"sector":"SaaS","subsector":"Enterprise compliance & process automation","stage":"Series C","fundingAmount":"$100M","fundingDate":"2026","leadInvestors":"","leadContact":"Management team","contactTitle":"","whyMAFits":"Compliance automation across global markets — could acquire supply chain or ESG reporting tools","outreachHook":"$100M Series C — M&A can accelerate international regulatory coverage","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":59,"company":"Rewaa","website":"rewaatech.com","hq":"Saudi Arabia","nycBased":false,"sector":"SaaS","subsector":"Retail operations platform","stage":"Series B","fundingAmount":"$45M","fundingDate":"Early 2026","leadInvestors":"","leadContact":"Management team","contactTitle":"","whyMAFits":"Retail SaaS — could acquire POS or inventory companies in MENA region","outreachHook":"Growing retail tech platform — acquisitions can expand product suite","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":60,"company":"Main Func","website":"mainfunc.ai","hq":"United States","nycBased":false,"sector":"SaaS","subsector":"AI agents for enterprise automation","stage":"Series B","fundingAmount":"$275M","fundingDate":"2025","leadInvestors":"Emergence Capital ($1.25B valuation)","leadContact":"Management team","contactTitle":"","whyMAFits":"AI agents automating white-collar tasks — could acquire domain-specific workflow automation","outreachHook":"$1.25B unicorn building enterprise AI agents","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":61,"company":"Harvey","website":"harvey.ai","hq":"San Francisco, CA","nycBased":false,"sector":"SaaS","subsector":"AI for legal professionals","stage":"Series E","fundingAmount":"$300M","fundingDate":"Early 2025","leadInvestors":"GV, Sequoia, Kleiner Perkins, OpenAI","leadContact":"Winston Weinberg","contactTitle":"CEO & Co-Founder","whyMAFits":"Leading AI legaltech — could acquire legal research or contract management companies","outreachHook":"Multiple massive rounds — legaltech platform expansion involves M&A","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":62,"company":"Lovable","website":"lovable.dev","hq":"Stockholm, Sweden","nycBased":false,"sector":"SaaS","subsector":"AI app builder (vibe coding)","stage":"Series B","fundingAmount":"$330M","fundingDate":"Dec 2025","leadInvestors":"CapitalG, Menlo ($6.6B valuation)","leadContact":"Anton Osika","contactTitle":"CEO & Founder","whyMAFits":"Fastest SaaS to $200M ARR — could acquire design tools or deployment infrastructure","outreachHook":"$6.6B valuation and hyper-growth","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":63,"company":"Esusu","website":"esusu.com","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Rent reporting & financial data","stage":"Series C","fundingAmount":"$50M","fundingDate":"Dec 2025","leadInvestors":"Blue Meridian, Kleiner Perkins","leadContact":"Wemimo Abbey","contactTitle":"CEO & Co-Founder","whyMAFits":"Financial data platform for housing — could acquire credit reporting or tenant screening tools","outreachHook":"$195M total raised — housing fintech is a fragmented space","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":64,"company":"Arch","website":"archfinancial.com","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Private investment management","stage":"Series B","fundingAmount":"$52M","fundingDate":"Sep 2025","leadInvestors":"Menlo Ventures, Craft Ventures, Oak HC/FT","leadContact":"Jason Trigg","contactTitle":"CEO & Co-Founder","whyMAFits":"Digital management of alternative investments — could acquire fund admin or portfolio analytics","outreachHook":"$77M total with top VCs — private markets infrastructure has natural acquisition targets","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":65,"company":"Imprint","website":"imprint.co","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Co-branded credit cards & financial products","stage":"Series D","fundingAmount":"$150M","fundingDate":"Dec 2025","leadInvestors":"Khosla Ventures ($1.2B valuation)","leadContact":"Daragh Murphy","contactTitle":"CEO & Co-Founder","whyMAFits":"Brand-affiliated financial products — could acquire loyalty tech or payment processing","outreachHook":"Fresh unicorn at $1.2B — co-brand products expand through fintech acquisitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":66,"company":"Rain","website":"rain.com","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Stablecoin payment infrastructure","stage":"Series C","fundingAmount":"$250M","fundingDate":"Jan 2026","leadInvestors":"Bessemer, Lightspeed, ICONIQ","leadContact":"Farooq Malik","contactTitle":"CEO & Co-Founder","whyMAFits":"Tokenized money and payment rails — could acquire crypto payment or treasury management companies","outreachHook":"$250M for stablecoin payments — building payment infrastructure of the future","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":67,"company":"Rogo","website":"rogo.ai","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"AI for financial research & workflows","stage":"Series C","fundingAmount":"$75M","fundingDate":"Jan 2026","leadInvestors":"Sequoia, Thrive Capital, Tiger Global","leadContact":"Gabriel Stengel","contactTitle":"CEO & Co-Founder","whyMAFits":"Enterprise AI for finance — could acquire financial data providers or document automation","outreachHook":"$154M total — Sequoia + Thrive + Tiger backing","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":68,"company":"Datarails","website":"datarails.com","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"FP&A automation platform","stage":"Series C","fundingAmount":"$70M","fundingDate":"Jan 2026","leadInvestors":"Innovation Endeavors, One Peak","leadContact":"Didi Gurfinkel","contactTitle":"CEO & Co-Founder","whyMAFits":"Financial planning and analysis automation — could acquire budgeting or forecasting tools","outreachHook":"$173M total raised — FP&A space ripe for consolidation","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":69,"company":"Talos","website":"talos.com","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Institutional crypto trading","stage":"Series B","fundingAmount":"$45M","fundingDate":"Jan 2026","leadInvestors":"a16z crypto, BNY, Fidelity, Robinhood","leadContact":"Anton Katz","contactTitle":"CEO & Co-Founder","whyMAFits":"End-to-end crypto trading platform — could acquire market data or custody tools","outreachHook":"BNY + Fidelity + Robinhood as investors — institutional backing signals ambitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":70,"company":"WithCoverage","website":"withcoverage.com","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Insurance broking platform","stage":"Series B","fundingAmount":"$42M","fundingDate":"Jan 2026","leadInvestors":"Khosla, Sequoia, 8VC","leadContact":"JD Ross","contactTitle":"CEO & Co-Founder","whyMAFits":"Modern risk management and insurance — could acquire specialty insurance or claims management","outreachHook":"Sequoia + Khosla for insurance disruption — M&A of specialty brokers","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":71,"company":"Felix","website":"felixpago.com","hq":"United States","nycBased":false,"sector":"Fintech","subsector":"Remittances for immigrants","stage":"Series B","fundingAmount":"$75M","fundingDate":"2025","leadInvestors":"QED Investors","leadContact":"Management team","contactTitle":"","whyMAFits":"Chat-based remittance platform — could acquire payment corridors or FX tools","outreachHook":"$75M from QED — cross-border payments have natural M&A targets","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":72,"company":"Mesh","website":"meshconnect.com","hq":"United States","nycBased":false,"sector":"Fintech","subsector":"Crypto payments","stage":"Series B","fundingAmount":"$82M","fundingDate":"2025","leadInvestors":"Paradigm","leadContact":"Management team","contactTitle":"","whyMAFits":"Crypto payment infrastructure — could acquire wallet or merchant tools","outreachHook":"$82M Series B — crypto payments space has significant M&A activity","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":73,"company":"Nirvana","website":"nirvanatech.com","hq":"United States","nycBased":false,"sector":"Fintech","subsector":"AI fleet insurance","stage":"Series D","fundingAmount":"$100M","fundingDate":"Dec 2025","leadInvestors":"Valor Equity ($1B+ valuation)","leadContact":"Management team","contactTitle":"","whyMAFits":"AI-based insurance risk management — could acquire telematics or fleet management companies","outreachHook":"Fresh unicorn in insurtech — AI insurance expands via data acquisitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":74,"company":"Rillet","website":"rillet.com","hq":"Palo Alto, CA","nycBased":false,"sector":"Fintech","subsector":"AI-native ERP for CFOs","stage":"Series B","fundingAmount":"$70M","fundingDate":"2025","leadInvestors":"a16z, Iconiq","leadContact":"Management team","contactTitle":"","whyMAFits":"AI-native accounting/ERP — could acquire tax or financial reporting tools","outreachHook":"a16z + Iconiq for AI ERP — positioned to disrupt legacy ERP","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":75,"company":"AppZen","website":"appzen.com","hq":"San Jose, CA","nycBased":false,"sector":"Fintech","subsector":"Agentic AI for finance teams","stage":"Series D","fundingAmount":"$180M","fundingDate":"2025","leadInvestors":"Riverwood Capital","leadContact":"Anant Kale","contactTitle":"CEO & Co-Founder","whyMAFits":"AI for expense management and finance automation — could acquire audit or AP automation","outreachHook":"$180M Series D — building agentic AI for finance","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":76,"company":"Rain (EWA)","website":"rain.us","hq":"Los Angeles, CA","nycBased":false,"sector":"Fintech","subsector":"Earned wage access","stage":"Series B","fundingAmount":"$75M","fundingDate":"Apr 2025","leadInvestors":"All-equity round","leadContact":"Jason Lee","contactTitle":"CEO & Co-Founder","whyMAFits":"Employer-integrated financial wellness — could acquire payroll or budgeting apps","outreachHook":"$75M all-equity Series B — EWA companies expand via financial wellness acquisitions","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":77,"company":"Octane","website":"octane.co","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Powersports & recreation financing","stage":"Series F","fundingAmount":"$50M","fundingDate":"Dec 2025","leadInvestors":"Valar Ventures, Upper90","leadContact":"Jason Guss","contactTitle":"CEO","whyMAFits":"Specialty lending for powersports — could acquire dealer management or adjacent fintech","outreachHook":"$352M total raised — M&A into adjacent recreation verticals","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":78,"company":"Bilt Rewards","website":"biltrewards.com","hq":"New York, NY","nycBased":true,"sector":"Fintech","subsector":"Rent rewards & real estate fintech","stage":"Growth","fundingAmount":"$250M","fundingDate":"2025","leadInvestors":"General Catalyst, GID ($13B valuation)","leadContact":"Ankur Jain","contactTitle":"CEO & Founder","whyMAFits":"Loyalty and rewards for housing — could acquire proptech or tenant services","outreachHook":"$13B valuation — massive platform with natural acquisition opportunities","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":79,"company":"Juniper Square","website":"junipersquare.com","hq":"San Francisco, CA","nycBased":false,"sector":"Fintech","subsector":"Private fund management","stage":"Series D","fundingAmount":"$130M","fundingDate":"2025","leadInvestors":"Fifth Wall, Ribbit Capital ($1.1B valuation)","leadContact":"Alex Robinson","contactTitle":"CEO & Co-Founder","whyMAFits":"Fund management at unicorn status — could acquire investor reporting or fund admin companies","outreachHook":"$1.1B valuation — M&A of specialized tools could build comprehensive platform","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":80,"company":"EliseAI","website":"eliseai.com","hq":"New York, NY","nycBased":true,"sector":"Proptech","subsector":"AI for housing & property management","stage":"Series E","fundingAmount":"$250M","fundingDate":"2025","leadInvestors":"a16z ($2.25B valuation)","leadContact":"Minna Song","contactTitle":"CEO & Founder","whyMAFits":"AI housing platform with $100M+ ARR — could acquire property management, maintenance, or tenant experience","outreachHook":"$2.25B valuation and $100M ARR — acquisitions could expand beyond leasing","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":81,"company":"Eon","website":"eon.io","hq":"New York, NY","nycBased":true,"sector":"Proptech","subsector":"Cloud data management","stage":"Series D","fundingAmount":"$300M","fundingDate":"Dec 2025","leadInvestors":"Sequoia, Lightspeed, Greenoaks","leadContact":"Gonen Stein","contactTitle":"CEO & Co-Founder","whyMAFits":"Cloud backup and data management — could acquire data recovery or compliance companies","outreachHook":"$497M total — clearly in scale-up mode with M&A as a growth lever","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":82,"company":"Cubby Storage","website":"cubbystorage.com","hq":"New York, NY","nycBased":true,"sector":"Proptech","subsector":"Self-storage operations","stage":"Series A","fundingAmount":"$63M","fundingDate":"Jan 2026","leadInvestors":"Goldman Sachs Alternatives","leadContact":"Adam Fleming","contactTitle":"CEO & Founder","whyMAFits":"Self-storage operations platform — could acquire storage facilities or property management tools","outreachHook":"Goldman-backed proptech — self-storage is a classic roll-up market","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":83,"company":"Voyantis","website":"voyantis.ai","hq":"Tel Aviv, Israel","nycBased":false,"sector":"CPG / Consumer","subsector":"AI customer acquisition platform (DTC)","stage":"Series B","fundingAmount":"$41M","fundingDate":"2025","leadInvestors":"$60M total","leadContact":"Ido Ivri","contactTitle":"CEO & Co-Founder","whyMAFits":"Prescriptive AI for DTC brands — could acquire marketing analytics or CRM companies","outreachHook":"AI platform serving DTC brands — acquisitions of data tools could strengthen moat","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":84,"company":"Perfumeo","website":"perfumeo.com","hq":"Europe","nycBased":false,"sector":"CPG / Consumer","subsector":"Fragrance / consumer brand","stage":"Series D","fundingAmount":"$105M","fundingDate":"2025","leadInvestors":"","leadContact":"Management team","contactTitle":"","whyMAFits":"DTC fragrance brand at scale — could acquire complementary beauty/fragrance brands","outreachHook":"$105M for a consumer brand signals growth-through-acquisition potential","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":85,"company":"Humble Growth (Portfolio)","website":"humblegrowth.com","hq":"United States","nycBased":false,"sector":"CPG / Consumer","subsector":"CPG fund (food beverage beauty pets)","stage":"$312M fund","fundingAmount":"","fundingDate":"","leadInvestors":"Peter Rahal (RXBar), Andrew Abraham (Orgain)","leadContact":"Peter Rahal, Andrew Abraham","contactTitle":"Fund GPs","whyMAFits":"Fund thesis is explicitly growth-through-acquisition for CPG — portfolio companies are potential Avera clients","outreachHook":"Direct alignment with Avera's M&A advisory services","status":"Researching","lastAction":"","nextStep":"","notes":""},
+  {"id":86,"company":"Recess","website":"takearecess.com","hq":"New York, NY","nycBased":true,"sector":"CPG / Consumer","subsector":"Functional beverages","stage":"Series B","fundingAmount":"$30M","fundingDate":"","leadInvestors":"","leadContact":"Benjamin Witte","contactTitle":"CEO & Founder","whyMAFits":"DTC beverage brand expanding retail — could acquire complementary brands or distribution","outreachHook":"NYC-based CPG with strong brand — M&A of adjacent brands could accelerate growth","status":"Researching","lastAction":"","nextStep":"","notes":""}
+];
+    </script>
+</head>
+<body>
+<div x-data="{
+    view: 'home',
+    page: 'dashboard',
+    prospectSearch: '',
+    prospectSectorFilter: '',
+    prospectStatusFilter: '',
+    prospectNycOnly: false,
+    get sectors() { return [...new Set(PROSPECTS.map(p => p.sector))].sort(); },
+    get statuses() { return [...new Set(PROSPECTS.map(p => p.status))].sort(); },
+    get filteredProspects() {
+        let list = PROSPECTS.filter(p => {
+            if (this.prospectSectorFilter && p.sector !== this.prospectSectorFilter) return false;
+            if (this.prospectStatusFilter && p.status !== this.prospectStatusFilter) return false;
+            if (this.prospectNycOnly && !p.nycBased) return false;
+            if (this.prospectSearch) {
+                const q = this.prospectSearch.toLowerCase();
+                return p.company.toLowerCase().includes(q) || p.subsector.toLowerCase().includes(q) || p.sector.toLowerCase().includes(q) || p.leadContact.toLowerCase().includes(q);
+            }
+            return true;
+        });
+        const priority = { 'Followed Up': 0, 'In Talks': 1, 'Researching': 2, 'Closed': 3 };
+        return list.sort((a, b) => (priority[a.status] ?? 99) - (priority[b.status] ?? 99));
+    },
+    get prospectStats() {
+        return {
+            total: PROSPECTS.length,
+            followedUp: PROSPECTS.filter(p => p.status === 'Followed Up').length,
+            inTalks: PROSPECTS.filter(p => p.status === 'In Talks').length,
+            closed: PROSPECTS.filter(p => p.status === 'Closed').length
+        };
+    },
+    get needsAttention() { return PROSPECTS.filter(p => p.nextStep); },
+    get weeklyActivity() {
+        return [
+            { week: 'Mar 10', label: 'Initial outreach', count: 5, color: 'var(--accent)' },
+            { week: 'Mar 18', label: 'Follow-ups sent', count: 5, color: 'var(--green)' }
+        ];
+    }
+}">
+
+    <!-- ========== HOMEPAGE ========== -->
+    <div class="home" x-show="view === 'home'" x-transition>
+        <div class="home-content">
+            <div class="home-logo">
+                <div class="home-logo-icon">A</div>
+                <div class="home-logo-text">Avera</div>
+            </div>
+            <h1>What would you like to <span>build</span> today?</h1>
+            <p class="home-sub">Your AI-powered M&A command center. Pick a starting point or jump straight into the dashboard.</p>
+            <div class="home-grid">
+                <div class="home-card" @click="view = 'app'; page = 'outreach'">
+                    <span class="home-card-icon">📬</span>
+                    <div class="home-card-title">Run Outreach</div>
+                    <div class="home-card-desc">Launch an automated campaign to source new deals</div>
+                </div>
+                <div class="home-card" @click="view = 'app'; page = 'pipeline'">
+                    <span class="home-card-icon">🎯</span>
+                    <div class="home-card-title">Manage Deals</div>
+                    <div class="home-card-desc">Check your pipeline, update stages, and track progress</div>
+                </div>
+                <div class="home-card" @click="view = 'app'; page = 'research'">
+                    <span class="home-card-icon">🔍</span>
+                    <div class="home-card-title">Research Trends</div>
+                    <div class="home-card-desc">AI-curated M&A market intelligence and comps</div>
+                </div>
+                <div class="home-card" @click="view = 'app'; page = 'templates'">
+                    <span class="home-card-icon">📄</span>
+                    <div class="home-card-title">Draft Documents</div>
+                    <div class="home-card-desc">LOI, NDA, term sheet, and purchase agreement templates</div>
+                </div>
+                <div class="home-card" @click="view = 'app'; page = 'modeling'">
+                    <span class="home-card-icon">📈</span>
+                    <div class="home-card-title">Build a Model</div>
+                    <div class="home-card-desc">Upload financials and generate projections instantly</div>
+                </div>
+                <div class="home-card" @click="view = 'app'; page = 'risks'">
+                    <span class="home-card-icon">⚠️</span>
+                    <div class="home-card-title">Assess Risks</div>
+                    <div class="home-card-desc">AI-identified deal risks with remediations</div>
+                </div>
+                <div class="home-card" @click="view = 'app'; page = 'prospects'">
+                    <span class="home-card-icon">🏢</span>
+                    <div class="home-card-title">Prospect Tracker</div>
+                    <div class="home-card-desc">Track and filter your 86 M&A prospect pipeline</div>
+                </div>
+            </div>
+            <button class="home-cta" @click="view = 'app'; page = 'dashboard'">Open Dashboard →</button>
+            <br>
+            <button class="home-skip" @click="view = 'app'; page = 'dashboard'">or skip to full dashboard</button>
+        </div>
+    </div>
+
+    <!-- ========== APP ========== -->
+    <div class="app" x-show="view === 'app'" x-transition>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">A</div>
+                Avera
+            </div>
+            <nav class="nav">
+                <button class="nav-item" :class="{ active: page === 'dashboard' }" @click="page = 'dashboard'">
+                    <span class="icon">📊</span> Dashboard
+                </button>
+                <button class="nav-item" :class="{ active: page === 'pipeline' }" @click="page = 'pipeline'">
+                    <span class="icon">🎯</span> Deal Pipeline
+                    <span class="nav-badge">5</span>
+                </button>
+                <button class="nav-item" :class="{ active: page === 'outreach' }" @click="page = 'outreach'">
+                    <span class="icon">📬</span> Outreach
+                </button>
+                <button class="nav-item" :class="{ active: page === 'research' }" @click="page = 'research'">
+                    <span class="icon">🔍</span> Research
+                </button>
+                <button class="nav-item" :class="{ active: page === 'prospects' }" @click="page = 'prospects'">
+                    <span class="icon">🏢</span> Prospects
+                    <span class="nav-badge" x-text="prospectStats.followedUp"></span>
+                </button>
+
+                <div class="nav-section">Deal Tools</div>
+                <button class="nav-item" :class="{ active: page === 'templates' }" @click="page = 'templates'">
+                    <span class="icon">📄</span> Templates
+                </button>
+                <button class="nav-item" :class="{ active: page === 'diligence' }" @click="page = 'diligence'">
+                    <span class="icon">✅</span> Due Diligence
+                </button>
+                <button class="nav-item" :class="{ active: page === 'modeling' }" @click="page = 'modeling'">
+                    <span class="icon">📈</span> Financial Model
+                </button>
+                <button class="nav-item" :class="{ active: page === 'risks' }" @click="page = 'risks'">
+                    <span class="icon">⚠️</span> Risk Analysis
+                </button>
+
+                <div style="flex:1"></div>
+                <div style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
+                    <button class="nav-item" @click="view = 'home'">
+                        <span class="icon">🏠</span> Home
+                    </button>
+                    <button class="nav-item">
+                        <span class="icon">⚙️</span> Settings
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <div class="main">
+            <header class="topbar">
+                <input type="text" class="search-box" placeholder="Search deals, docs, templates...">
+                <div style="display:flex; align-items:center; gap:14px;">
+                    <button class="btn btn-primary">+ New Deal</button>
+                    <div class="avatar">IC</div>
+                </div>
+            </header>
+
+            <!-- Dashboard -->
+            <div class="content" x-show="page === 'dashboard'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Good evening, Ilene</h1>
+                    <p class="page-sub">Here's your deal activity for this week</p>
+                </div>
+                <div class="grid-4 section">
+                    <div class="stat-card fade-in">
+                        <div class="stat-label">Active Deals</div>
+                        <div class="stat-value">5</div>
+                        <div class="stat-change stat-up">↑ 2 this month</div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay:0.1s">
+                        <div class="stat-label">Pipeline Value</div>
+                        <div class="stat-value mono">$42M</div>
+                        <div class="stat-change stat-up">↑ 18% vs last Q</div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay:0.2s">
+                        <div class="stat-label">Outreach Sent</div>
+                        <div class="stat-value">128</div>
+                        <div class="stat-change stat-up">↑ 34 this week</div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay:0.3s">
+                        <div class="stat-label">Response Rate</div>
+                        <div class="stat-value mono">23%</div>
+                        <div class="stat-change stat-up">↑ 4% vs avg</div>
+                    </div>
+                </div>
+                <div class="grid-2 section">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Recent Activity</span>
+                            <button class="btn btn-ghost btn-sm">View All</button>
+                        </div>
+                        <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div><div class="feed-text">LOI signed — <strong>Vertex Manufacturing</strong></div><div class="feed-time">2 hours ago</div></div></div>
+                        <div class="feed-item"><div class="feed-dot" style="background:var(--accent)"></div><div><div class="feed-text">Financial model updated — <strong>NovaPay</strong></div><div class="feed-time">5 hours ago</div></div></div>
+                        <div class="feed-item"><div class="feed-dot" style="background:var(--amber)"></div><div><div class="feed-text">Due diligence 68% complete — <strong>CloudBridge</strong></div><div class="feed-time">Yesterday</div></div></div>
+                        <div class="feed-item"><div class="feed-dot" style="background:var(--pink)"></div><div><div class="feed-text">New outreach response — <strong>Apex Logistics</strong></div><div class="feed-time">Yesterday</div></div></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">M&A Market Trends</span>
+                            <button class="btn btn-ghost btn-sm">Full Report</button>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:16px;">
+                            <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.84rem;font-weight:600;">Tech / SaaS</span><span class="tag tag-green">Hot</span></div><div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--green)"></div></div></div>
+                            <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.84rem;font-weight:600;">Healthcare Services</span><span class="tag tag-green">Hot</span></div><div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--green)"></div></div></div>
+                            <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.84rem;font-weight:600;">Manufacturing</span><span class="tag tag-amber">Moderate</span></div><div class="progress-bar"><div class="progress-fill" style="width:55%;background:var(--amber)"></div></div></div>
+                            <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.84rem;font-weight:600;">Retail / E-comm</span><span class="tag tag-amber">Moderate</span></div><div class="progress-bar"><div class="progress-fill" style="width:42%;background:var(--amber)"></div></div></div>
+                            <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.84rem;font-weight:600;">Commercial Real Estate</span><span class="tag tag-red">Cooling</span></div><div class="progress-bar"><div class="progress-fill" style="width:25%;background:var(--red)"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline -->
+            <div class="content" x-show="page === 'pipeline'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Deal Pipeline</h1>
+                    <p class="page-sub">Track and manage your active deals</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="tabs">
+                            <button class="tab active">All Deals</button>
+                            <button class="tab">Pre-LOI</button>
+                            <button class="tab">Post-LOI</button>
+                            <button class="tab">Closed</button>
+                        </div>
+                        <button class="btn btn-primary btn-sm">+ Add Deal</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Company</th><th>Sector</th><th>Deal Size</th><th>Stage</th><th>Diligence</th><th>Last Activity</th></tr></thead>
+                            <tbody>
+                                <tr><td><div class="company-name">Vertex Manufacturing</div><div class="company-sub">Industrial automation</div></td><td>Manufacturing</td><td class="mono">$18.5M</td><td><span class="tag tag-green">LOI Signed</span></td><td><div class="progress-bar" style="width:100px"><div class="progress-fill" style="width:82%;background:var(--green)"></div></div><span style="font-size:0.72rem;color:var(--text-dim)">82%</span></td><td style="color:var(--text-dim);font-size:0.82rem;">2h ago</td></tr>
+                                <tr><td><div class="company-name">NovaPay</div><div class="company-sub">Fintech / payments</div></td><td>Tech / SaaS</td><td class="mono">$12M</td><td><span class="tag tag-amber">Negotiating</span></td><td><div class="progress-bar" style="width:100px"><div class="progress-fill" style="width:45%;background:var(--amber)"></div></div><span style="font-size:0.72rem;color:var(--text-dim)">45%</span></td><td style="color:var(--text-dim);font-size:0.82rem;">5h ago</td></tr>
+                                <tr><td><div class="company-name">CloudBridge</div><div class="company-sub">Cloud infrastructure</div></td><td>Tech / SaaS</td><td class="mono">$8.2M</td><td><span class="tag tag-purple">Diligence</span></td><td><div class="progress-bar" style="width:100px"><div class="progress-fill" style="width:68%;background:var(--accent)"></div></div><span style="font-size:0.72rem;color:var(--text-dim)">68%</span></td><td style="color:var(--text-dim);font-size:0.82rem;">1d ago</td></tr>
+                                <tr><td><div class="company-name">Apex Logistics</div><div class="company-sub">Last-mile delivery</div></td><td>Logistics</td><td class="mono">$5.8M</td><td><span class="tag tag-amber">Initial Contact</span></td><td><div class="progress-bar" style="width:100px"><div class="progress-fill" style="width:10%;background:var(--amber)"></div></div><span style="font-size:0.72rem;color:var(--text-dim)">10%</span></td><td style="color:var(--text-dim);font-size:0.82rem;">1d ago</td></tr>
+                                <tr><td><div class="company-name">MedCore Health</div><div class="company-sub">Healthcare staffing</div></td><td>Healthcare</td><td class="mono">$22M</td><td><span class="tag tag-purple">Research</span></td><td><div class="progress-bar" style="width:100px"><div class="progress-fill" style="width:5%;background:var(--accent)"></div></div><span style="font-size:0.72rem;color:var(--text-dim)">5%</span></td><td style="color:var(--text-dim);font-size:0.82rem;">3d ago</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outreach -->
+            <div class="content" x-show="page === 'outreach'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Automated Outreach</h1>
+                    <p class="page-sub">AI-powered campaigns to source new deals</p>
+                </div>
+                <div class="grid-4 section">
+                    <div class="stat-card"><div class="outreach-stat"><div class="outreach-num" style="color:var(--accent)">128</div><div class="outreach-label">Total Sent</div></div></div>
+                    <div class="stat-card"><div class="outreach-stat"><div class="outreach-num" style="color:var(--green)">29</div><div class="outreach-label">Responses</div></div></div>
+                    <div class="stat-card"><div class="outreach-stat"><div class="outreach-num" style="color:var(--amber)">12</div><div class="outreach-label">Meetings Set</div></div></div>
+                    <div class="stat-card"><div class="outreach-stat"><div class="outreach-num" style="color:var(--pink)">23%</div><div class="outreach-label">Response Rate</div></div></div>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Active Campaigns</span><button class="btn btn-primary btn-sm">+ New Campaign</button></div>
+                        <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div style="flex:1"><div class="feed-text"><strong>SaaS Roll-up — West Coast</strong></div><div class="feed-time">42 contacts · 11 responses · Running</div></div><span class="tag tag-green">Active</span></div>
+                        <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div style="flex:1"><div class="feed-text"><strong>Healthcare Services — Southeast</strong></div><div class="feed-time">56 contacts · 14 responses · Running</div></div><span class="tag tag-green">Active</span></div>
+                        <div class="feed-item"><div class="feed-dot" style="background:var(--amber)"></div><div style="flex:1"><div class="feed-text"><strong>Manufacturing — Midwest</strong></div><div class="feed-time">30 contacts · 4 responses · Paused</div></div><span class="tag tag-amber">Paused</span></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">AI Outreach Preview</span></div>
+                        <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:20px;font-size:0.84rem;line-height:1.7;">
+                            <div style="color:var(--text-dim);margin-bottom:10px;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Generated Email — SaaS Roll-up Campaign</div>
+                            <p>Hi [First Name],</p><br>
+                            <p>I came across [Company] and was impressed by your growth in [vertical]. I'm working with a group acquiring complementary SaaS businesses, and your platform caught our attention.</p><br>
+                            <p>Would you be open to a brief conversation about what a partnership or acquisition could look like? No pressure — just exploring fit.</p><br>
+                            <p>Best,<br>Ilene</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research -->
+            <div class="content" x-show="page === 'research'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">M&A Research</h1>
+                    <p class="page-sub">AI-curated trends, comps, and market intelligence</p>
+                </div>
+                <div class="card section">
+                    <div class="card-header"><span class="card-title">This Week's Market Intel</span><span class="tag tag-purple">AI Generated</span></div>
+                    <div class="grid-3" style="gap:16px">
+                        <div class="template-card"><div class="template-icon">📉</div><div class="template-name">SaaS Multiples Compressing</div><div class="template-desc">Median EV/Revenue for sub-$20M ARR SaaS fell to 4.2x from 5.8x. Buyer's market forming in vertical SaaS.</div></div>
+                        <div class="template-card"><div class="template-icon">🏥</div><div class="template-name">Healthcare Services Surge</div><div class="template-desc">PE-backed platform deals up 32% YoY. Staffing and home health seeing highest demand.</div></div>
+                        <div class="template-card"><div class="template-icon">🏭</div><div class="template-name">Manufacturing Reshoring Wave</div><div class="template-desc">Domestic manufacturing acquisitions up 18%. Automation and quality control targets premium.</div></div>
+                        <div class="template-card"><div class="template-icon">💰</div><div class="template-name">Dry Powder at Record Highs</div><div class="template-desc">$1.2T in uninvested PE capital. Mid-market competition intensifying for quality assets.</div></div>
+                        <div class="template-card"><div class="template-icon">📊</div><div class="template-name">Deal Terms Shifting</div><div class="template-desc">Earnout usage up 40%. Buyers increasingly structuring with seller financing and performance-based payouts.</div></div>
+                        <div class="template-card"><div class="template-icon">🌍</div><div class="template-name">Cross-Border Activity Cooling</div><div class="template-desc">Regulatory scrutiny slowing international deals. Domestic add-ons preferred for speed and certainty.</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates -->
+            <div class="content" x-show="page === 'templates'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Document Templates</h1>
+                    <p class="page-sub">Standard M&A documents, ready to customize</p>
+                </div>
+                <div class="grid-3">
+                    <div class="template-card"><div class="template-icon">📝</div><div class="template-name">Letter of Intent (LOI)</div><div class="template-desc">Standard non-binding LOI with purchase price, structure, and key terms</div><div style="margin-top:14px"><button class="btn btn-ghost btn-sm">Use Template</button></div></div>
+                    <div class="template-card"><div class="template-icon">📋</div><div class="template-name">Term Sheet</div><div class="template-desc">Deal terms summary including valuation, consideration mix, and closing conditions</div><div style="margin-top:14px"><button class="btn btn-ghost btn-sm">Use Template</button></div></div>
+                    <div class="template-card"><div class="template-icon">🔒</div><div class="template-name">Non-Disclosure Agreement</div><div class="template-desc">Mutual NDA for M&A discussions with standard confidentiality provisions</div><div style="margin-top:14px"><button class="btn btn-ghost btn-sm">Use Template</button></div></div>
+                    <div class="template-card"><div class="template-icon">📑</div><div class="template-name">Purchase Agreement (APA)</div><div class="template-desc">Asset purchase agreement with reps, warranties, indemnification, and closing mechanics</div><div style="margin-top:14px"><button class="btn btn-ghost btn-sm">Use Template</button></div></div>
+                    <div class="template-card"><div class="template-icon">📑</div><div class="template-name">Purchase Agreement (SPA)</div><div class="template-desc">Stock purchase agreement for equity acquisitions with standard provisions</div><div style="margin-top:14px"><button class="btn btn-ghost btn-sm">Use Template</button></div></div>
+                    <div class="template-card"><div class="template-icon">🤝</div><div class="template-name">Management Services Agreement</div><div class="template-desc">Post-close management and transition services with timeline and fees</div><div style="margin-top:14px"><button class="btn btn-ghost btn-sm">Use Template</button></div></div>
+                </div>
+            </div>
+
+            <!-- Due Diligence -->
+            <div class="content" x-show="page === 'diligence'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Due Diligence</h1>
+                    <p class="page-sub">Pre-LOI and Post-LOI checklists for every deal</p>
+                </div>
+                <div class="tabs section">
+                    <button class="tab active">Pre-LOI</button>
+                    <button class="tab">Post-LOI</button>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title" style="margin-bottom:16px">Financial</div>
+                        <div x-data="{ items: [
+                            { name: 'Revenue & growth analysis', done: true },
+                            { name: 'Gross margin breakdown', done: true },
+                            { name: 'Customer concentration risk', done: true },
+                            { name: 'Working capital analysis', done: false },
+                            { name: 'Debt & liabilities review', done: false },
+                            { name: 'Tax compliance check', done: false },
+                        ]}">
+                            <template x-for="item in items">
+                                <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.85rem;cursor:pointer" @click="item.done = !item.done">
+                                    <span x-text="item.done ? '✅' : '⬜'"></span>
+                                    <span :style="item.done ? 'text-decoration:line-through;color:var(--text-dim)' : ''" x-text="item.name"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title" style="margin-bottom:16px">Legal & Operations</div>
+                        <div x-data="{ items: [
+                            { name: 'Corporate structure review', done: true },
+                            { name: 'Key contracts & agreements', done: false },
+                            { name: 'IP & proprietary tech audit', done: false },
+                            { name: 'Employment agreements', done: false },
+                            { name: 'Regulatory compliance', done: false },
+                            { name: 'Litigation & disputes', done: false },
+                        ]}">
+                            <template x-for="item in items">
+                                <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.85rem;cursor:pointer" @click="item.done = !item.done">
+                                    <span x-text="item.done ? '✅' : '⬜'"></span>
+                                    <span :style="item.done ? 'text-decoration:line-through;color:var(--text-dim)' : ''" x-text="item.name"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Modeling -->
+            <div class="content" x-show="page === 'modeling'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Financial Modeling</h1>
+                    <p class="page-sub">Upload financials and let AI build your model</p>
+                </div>
+                <div class="section">
+                    <div class="upload-zone">
+                        <div class="upload-icon">📂</div>
+                        <div class="upload-text">Drop financial statements here — P&L, balance sheet, cash flow</div>
+                        <div style="font-size:0.75rem;color:var(--text-dim);margin-top:8px">Supports PDF, Excel, CSV</div>
+                    </div>
+                </div>
+                <div class="card section">
+                    <div class="card-header"><span class="card-title">Model: Vertex Manufacturing</span><span class="tag tag-green">Complete</span></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th></th><th>2023A</th><th>2024A</th><th>2025E</th><th>2026E</th><th>2027E</th></tr></thead>
+                            <tbody>
+                                <tr><td style="font-weight:700">Revenue</td><td class="mono">$8.2M</td><td class="mono">$10.1M</td><td class="mono">$12.4M</td><td class="mono">$15.0M</td><td class="mono">$17.8M</td></tr>
+                                <tr><td style="font-weight:700">EBITDA</td><td class="mono">$1.6M</td><td class="mono">$2.2M</td><td class="mono">$2.9M</td><td class="mono">$3.6M</td><td class="mono">$4.5M</td></tr>
+                                <tr><td style="font-weight:700">EBITDA Margin</td><td class="mono">19.5%</td><td class="mono">21.8%</td><td class="mono">23.4%</td><td class="mono">24.0%</td><td class="mono">25.3%</td></tr>
+                                <tr><td style="font-weight:700">Free Cash Flow</td><td class="mono">$1.1M</td><td class="mono">$1.5M</td><td class="mono">$2.1M</td><td class="mono">$2.7M</td><td class="mono">$3.4M</td></tr>
+                                <tr><td style="font-weight:700">Implied EV (6x)</td><td class="mono">$9.6M</td><td class="mono">$13.2M</td><td class="mono">$17.4M</td><td class="mono">$21.6M</td><td class="mono">$27.0M</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prospects -->
+            <div class="content" x-show="page === 'prospects'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Prospect Pipeline</h1>
+                    <p class="page-sub">86 M&A prospects tracked across 7 sectors</p>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid-4 section">
+                    <div class="stat-card fade-in">
+                        <div class="stat-label">Total Prospects</div>
+                        <div class="stat-value" x-text="prospectStats.total"></div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay:0.1s">
+                        <div class="stat-label">Followed Up</div>
+                        <div class="stat-value" style="color:var(--accent)" x-text="prospectStats.followedUp"></div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay:0.2s">
+                        <div class="stat-label">In Talks</div>
+                        <div class="stat-value" style="color:var(--green)" x-text="prospectStats.inTalks"></div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay:0.3s">
+                        <div class="stat-label">Closed</div>
+                        <div class="stat-value" style="color:var(--amber)" x-text="prospectStats.closed"></div>
+                    </div>
+                </div>
+
+                <!-- Needs Attention + Weekly Activity -->
+                <div class="grid-2 section">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Needs Attention</span>
+                            <span class="tag tag-purple" x-text="needsAttention.length + ' prospects'"></span>
+                        </div>
+                        <template x-for="p in needsAttention" :key="p.id">
+                            <div class="feed-item">
+                                <div class="feed-dot" style="background:var(--accent)"></div>
+                                <div>
+                                    <div class="feed-text"><strong x-text="p.company"></strong></div>
+                                    <div class="feed-time" x-text="p.nextStep"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Weekly Outreach Activity</span>
+                        </div>
+                        <div class="bar-chart">
+                            <template x-for="w in weeklyActivity" :key="w.week">
+                                <div class="bar-row">
+                                    <div class="bar-label" x-text="w.week"></div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill" :style="'width:' + (w.count * 20) + '%;background:' + w.color" x-text="w.count + ' ' + w.label"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filterable Prospect Table -->
+                <div class="card section">
+                    <div class="card-header">
+                        <span class="card-title">All Prospects</span>
+                    </div>
+                    <div class="filter-bar">
+                        <select class="filter-select" x-model="prospectSectorFilter">
+                            <option value="">All Sectors</option>
+                            <template x-for="s in sectors" :key="s">
+                                <option :value="s" x-text="s"></option>
+                            </template>
+                        </select>
+                        <select class="filter-select" x-model="prospectStatusFilter">
+                            <option value="">All Statuses</option>
+                            <template x-for="s in statuses" :key="s">
+                                <option :value="s" x-text="s"></option>
+                            </template>
+                        </select>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" x-model="prospectNycOnly">
+                            NYC Only
+                        </label>
+                        <input type="text" class="search-box" placeholder="Search company, sector, contact..." x-model="prospectSearch" style="width:220px">
+                        <span class="result-count">Showing <span x-text="filteredProspects.length"></span> of <span x-text="prospectStats.total"></span></span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Company</th>
+                                    <th>Sector</th>
+                                    <th>Stage</th>
+                                    <th>Status</th>
+                                    <th>Next Step</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="p in filteredProspects" :key="p.id">
+                                    <tr>
+                                        <td x-text="p.id" style="color:var(--text-dim);font-size:0.78rem"></td>
+                                        <td>
+                                            <div class="company-name" x-text="p.company"></div>
+                                            <div class="company-sub" x-text="p.subsector"></div>
+                                        </td>
+                                        <td x-text="p.sector" style="font-size:0.82rem"></td>
+                                        <td><span class="tag tag-purple" x-text="p.stage" style="font-size:0.68rem"></span></td>
+                                        <td>
+                                            <span class="tag"
+                                                :class="{
+                                                    'tag-green': p.status === 'In Talks',
+                                                    'tag-amber': p.status === 'Followed Up',
+                                                    'tag-purple': p.status === 'Researching',
+                                                    'tag-red': p.status === 'Closed'
+                                                }"
+                                                x-text="p.status"></span>
+                                        </td>
+                                        <td style="font-size:0.8rem;color:var(--text-dim);max-width:200px" x-text="p.nextStep || '—'"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Analysis -->
+            <div class="content" x-show="page === 'risks'" x-transition>
+                <div class="section">
+                    <h1 class="page-title">Risk Analysis</h1>
+                    <p class="page-sub">AI-identified risks and recommended remediations</p>
+                </div>
+                <div class="card section">
+                    <div class="card-header"><span class="card-title">Vertex Manufacturing — Key Risks</span><button class="btn btn-ghost btn-sm">Export PDF</button></div>
+                    <div class="risk-item"><div class="risk-icon">🔴</div><div><div class="risk-title">Customer Concentration</div><div class="risk-desc">Top 3 customers account for 58% of revenue. Loss of any major account would significantly impact valuation.</div><div class="risk-action">Remediation: Negotiate long-term contracts pre-close; include customer retention earnout →</div></div></div>
+                    <div class="risk-item"><div class="risk-icon">🟡</div><div><div class="risk-title">Key Person Dependency</div><div class="risk-desc">Founder/CEO manages all major client relationships and has no succession plan in place.</div><div class="risk-action">Remediation: Structure 18-month transition period; hire VP Sales pre-close →</div></div></div>
+                    <div class="risk-item"><div class="risk-icon">🟡</div><div><div class="risk-title">Aging Equipment</div><div class="risk-desc">40% of manufacturing equipment is 10+ years old. CapEx requirements of ~$1.2M in next 24 months.</div><div class="risk-action">Remediation: Adjust purchase price by deferred CapEx; negotiate seller credit →</div></div></div>
+                    <div class="risk-item"><div class="risk-icon">🟢</div><div><div class="risk-title">Regulatory Compliance</div><div class="risk-desc">All environmental and safety certifications current. No pending regulatory actions.</div><div class="risk-action">Status: Low risk — verify certifications during diligence →</div></div></div>
+                    <div class="risk-item"><div class="risk-icon">🟡</div><div><div class="risk-title">Working Capital Volatility</div><div class="risk-desc">Inventory days trending up (45 → 62). AR aging showing 15% over 90 days.</div><div class="risk-action">Remediation: Include working capital peg in purchase agreement; tighten AR collection pre-close →</div></div></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

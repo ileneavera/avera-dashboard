@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,8 @@
     "globals": "^17.4.0",
     "htmlhint": "^1.9.2",
     "vitest": "^4.1.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
